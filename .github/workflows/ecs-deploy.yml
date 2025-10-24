@@ -78,9 +78,12 @@ jobs:
         run: |
           set -euo pipefail
           DD_SECRET_ARN="${{ secrets.DATADOG_API_KEY_SECRET_ARN }}"
-          if [ -z "$DD_SECRET_ARN" ]; then
+          DD_SECRET_SOURCE="secrets.DATADOG_API_KEY_SECRET_ARN"
+
+          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "null" ]; then
             SECRET_NAME="${DATADOG_SECRET_NAME:-ecs-demo-dev-datadog-api-key}"
             if [ -n "$SECRET_NAME" ]; then
+              DD_SECRET_SOURCE="secretsmanager:$SECRET_NAME"
               DD_SECRET_ARN=$(aws secretsmanager describe-secret \
                 --secret-id "$SECRET_NAME" \
                 --query 'ARN' \
@@ -88,10 +91,12 @@ jobs:
             fi
           fi
 
-          if [ -z "$DD_SECRET_ARN" ]; then
-            echo "Datadog secret ARN not available. Provide secrets.DATADOG_API_KEY_SECRET_ARN or vars.DATADOG_SECRET_NAME." >&2
+          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "-" ] || [ "$DD_SECRET_ARN" = "null" ]; then
+            echo "::error::Datadog secret ARN could not be resolved (value: '${DD_SECRET_ARN:-<empty>}')." >&2
             exit 1
           fi
+
+          echo "::notice::Using Datadog secret from $DD_SECRET_SOURCE"
 
           aws ecs describe-task-definition \
             --task-definition "$TASK_DEFINITION_FAMILY" \
