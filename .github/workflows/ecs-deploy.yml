@@ -80,7 +80,7 @@ jobs:
           DD_SECRET_ARN="${{ secrets.DATADOG_API_KEY_SECRET_ARN }}"
           DD_SECRET_SOURCE="secrets.DATADOG_API_KEY_SECRET_ARN"
 
-          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "null" ]; then
+          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "null" ] || [ "$DD_SECRET_ARN" = "-" ]; then
             SECRET_NAME="${DATADOG_SECRET_NAME:-ecs-demo-dev-datadog-api-key}"
             if [ -n "$SECRET_NAME" ]; then
               DD_SECRET_SOURCE="secretsmanager:$SECRET_NAME"
