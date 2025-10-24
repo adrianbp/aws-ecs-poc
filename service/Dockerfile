@@ -8,8 +8,9 @@ RUN mvn -B -DskipTests clean package
 # Runtime stage: Amazon Linux com Corretto 21 headless
 FROM amazonlinux:2023
 RUN dnf update -y \
-    && dnf install -y java-21-amazon-corretto-headless \
-    && dnf install -y curl \
+    && dnf install -y dnf-plugins-core \
+    && dnf config-manager --add-repo https://rpm.corretto.aws/corretto.repo \
+    && dnf install -y java-21-amazon-corretto-headless curl \
     && dnf clean all \
     && rm -rf /var/cache/dnf
 
