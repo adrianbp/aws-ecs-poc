@@ -17,6 +17,7 @@ env:
   ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
   TASK_DEFINITION_FAMILY: ${{ secrets.TASK_DEFINITION_FAMILY }}
   DEFAULT_JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
+  DATADOG_SECRET_NAME: ${{ vars.DATADOG_SECRET_NAME }}
 
 jobs:
   build-and-deploy:
@@ -76,12 +77,28 @@ jobs:
           IMAGE_URI: ${{ steps.build-image.outputs.image_uri }}
         run: |
           set -euo pipefail
+          DD_SECRET_ARN="${{ secrets.DATADOG_API_KEY_SECRET_ARN }}"
+          if [ -z "$DD_SECRET_ARN" ]; then
+            SECRET_NAME="${DATADOG_SECRET_NAME:-ecs-demo-dev-datadog-api-key}"
+            if [ -n "$SECRET_NAME" ]; then
+              DD_SECRET_ARN=$(aws secretsmanager describe-secret \
+                --secret-id "$SECRET_NAME" \
+                --query 'ARN' \
+                --output text)
+            fi
+          fi
+
+          if [ -z "$DD_SECRET_ARN" ]; then
+            echo "Datadog secret ARN not available. Provide secrets.DATADOG_API_KEY_SECRET_ARN or vars.DATADOG_SECRET_NAME." >&2
+            exit 1
+          fi
+
           aws ecs describe-task-definition \
             --task-definition "$TASK_DEFINITION_FAMILY" \
             --query 'taskDefinition' \
             > task-def.json
 
-          jq --arg image "$IMAGE_URI" --arg java_opts "$JAVA_TOOL_OPTIONS" '
+          jq --arg image "$IMAGE_URI" --arg java_opts "$JAVA_TOOL_OPTIONS" --arg dd_secret "$DD_SECRET_ARN" '
             def clean: del(
               .taskDefinitionArn,
               .revision,
@@ -101,6 +118,8 @@ jobs:
                   | .environment = ((.environment // [])
                       | map(select(.name != "JAVA_TOOL_OPTIONS"))
                       + [{"name": "JAVA_TOOL_OPTIONS", "value": $java_opts}])
+                elif .name == "datadog-agent" then
+                  .secrets = ([{"name": "DD_API_KEY", "valueFrom": $dd_secret}])
                 else . end
               ))
           ' task-def.json > new-task-def.json

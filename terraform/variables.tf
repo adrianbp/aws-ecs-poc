@@ -117,6 +117,13 @@ variable "datadog_api_key_secret_arn" {
   default     = null
 }
 
+variable "datadog_api_key_value" {
+  description = "Valor da chave Datadog usado para criar um secret gerenciado (opcional e sensível)"
+  type        = string
+  default     = null
+  sensitive   = true
+}
+
 variable "datadog_site" {
   description = "Site Datadog a ser utilizado"
   type        = string

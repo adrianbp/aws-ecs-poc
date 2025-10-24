@@ -106,6 +106,11 @@ locals {
     ]
   ) : []
 
+  datadog_secret_arn_primary = var.enable_datadog_agent ? coalesce(
+    var.datadog_api_key_secret_arn,
+    try(aws_secretsmanager_secret.datadog[0].arn, null)
+  ) : null
+
   datadog_container_definition = var.enable_datadog_agent ? merge(
     {
       name              = "datadog-agent"
@@ -123,13 +128,13 @@ locals {
         }
       }
     },
-    var.datadog_api_key_secret_arn == null
+    local.datadog_secret_arn_primary == null
     ? {}
     : {
       secrets = [
         {
           name      = "DD_API_KEY"
-          valueFrom = var.datadog_api_key_secret_arn
+          valueFrom = local.datadog_secret_arn_primary
         }
       ]
     },
@@ -147,6 +152,22 @@ locals {
   container_definitions_json = jsonencode(local.container_definitions_list)
 
   datadog_volumes = var.enable_datadog_agent ? ["dd-sockets"] : []
+  datadog_secret_arns = var.enable_datadog_agent ? distinct(
+    compact(
+      concat(
+        local.datadog_secret_arn_primary != null ? [
+          local.datadog_secret_arn_primary,
+          "${local.datadog_secret_arn_primary}:*",
+          "${local.datadog_secret_arn_primary}-*"
+        ] : [],
+        var.datadog_api_key_secret_arn != null && local.datadog_secret_arn_primary != var.datadog_api_key_secret_arn ? [
+          var.datadog_api_key_secret_arn,
+          "${var.datadog_api_key_secret_arn}:*",
+          "${var.datadog_api_key_secret_arn}-*"
+        ] : []
+      )
+    )
+  ) : []
 }
 
 resource "aws_vpc" "this" {
@@ -315,6 +336,33 @@ resource "aws_ecr_repository" "this" {
   }
 }
 
+resource "aws_secretsmanager_secret" "datadog" {
+  count = var.enable_datadog_agent && var.datadog_api_key_secret_arn == null ? 1 : 0
+
+  name = "${local.name_prefix}-datadog-api-key"
+
+  tags = {
+    Name        = "${local.name_prefix}-datadog-api-key"
+    Environment = var.environment
+  }
+}
+
+resource "aws_secretsmanager_secret_version" "datadog" {
+  count = var.enable_datadog_agent && var.datadog_api_key_secret_arn == null ? 1 : 0
+
+  secret_id     = aws_secretsmanager_secret.datadog[0].id
+  secret_string = var.datadog_api_key_value
+
+  lifecycle {
+    precondition {
+      condition     = var.datadog_api_key_value != null && var.datadog_api_key_value != ""
+      error_message = "Informe datadog_api_key_value quando enable_datadog_agent for true e nenhum ARN de secret for fornecido."
+    }
+
+    ignore_changes = [secret_string]
+  }
+}
+
 data "aws_iam_policy_document" "ecs_task_execution" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -397,7 +445,7 @@ resource "aws_iam_role_policy_attachment" "datadog_task_execution_cloudwatch" {
 }
 
 resource "aws_iam_role_policy" "datadog_task_execution_secret" {
-  count = var.enable_datadog_agent && var.datadog_api_key_secret_arn != null ? 1 : 0
+  count = var.enable_datadog_agent && (var.datadog_api_key_secret_arn != null || var.datadog_api_key_value != null) ? 1 : 0
 
   name = "${local.name_prefix}-datadog-secret-access"
   role = aws_iam_role.datadog_task_execution[0].id
@@ -405,9 +453,12 @@ resource "aws_iam_role_policy" "datadog_task_execution_secret" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect   = "Allow"
-        Action   = ["secretsmanager:GetSecretValue"]
-        Resource = var.datadog_api_key_secret_arn
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = local.datadog_secret_arns
       }
     ]
   })
@@ -485,10 +536,16 @@ data "aws_iam_policy_document" "github_actions" {
   statement {
     effect  = "Allow"
     actions = ["iam:PassRole"]
-    resources = [
-      aws_iam_role.ecs_task_execution.arn,
-      aws_iam_role.ecs_task.arn
-    ]
+    resources = concat(
+      [
+        aws_iam_role.ecs_task_execution.arn,
+        aws_iam_role.ecs_task.arn
+      ],
+      var.enable_datadog_agent ? [
+        aws_iam_role.datadog_task_execution[0].arn,
+        aws_iam_role.datadog_task[0].arn
+      ] : []
+    )
   }
 }
 
@@ -530,8 +587,8 @@ resource "aws_ecs_task_definition" "this" {
     ignore_changes = [container_definitions]
 
     precondition {
-      condition     = !(var.enable_datadog_agent && var.datadog_api_key_secret_arn == null)
-      error_message = "Quando enable_datadog_agent for true, informe datadog_api_key_secret_arn com o ARN do secret contendo a chave do Datadog."
+      condition     = !(var.enable_datadog_agent && var.datadog_api_key_secret_arn == null && var.datadog_api_key_value == null)
+      error_message = "Quando enable_datadog_agent for true, informe datadog_api_key_secret_arn ou forneca datadog_api_key_value para criar o secret automaticamente."
     }
   }
 }
