@@ -3,8 +3,150 @@ provider "aws" {
 }
 
 locals {
-  name_prefix   = "${var.project_name}-${var.environment}"
-  subnet_config = { for idx, az in var.availability_zones : az => var.public_subnet_cidrs[idx] }
+  name_prefix    = "${var.project_name}-${var.environment}"
+  subnet_config  = { for idx, az in var.availability_zones : az => var.public_subnet_cidrs[idx] }
+  github_subject = "repo:${var.github_owner}/${var.github_repository}:ref:refs/heads/${var.github_branch}"
+
+  app_environment = concat(
+    [
+      {
+        name  = "JAVA_TOOL_OPTIONS"
+        value = var.jvm_tool_options
+      }
+    ],
+    var.enable_datadog_agent ? [
+      {
+        name  = "DD_AGENT_HOST"
+        value = "127.0.0.1"
+      },
+      {
+        name  = "DD_ENV"
+        value = var.environment
+      },
+      {
+        name  = "DD_SERVICE"
+        value = var.project_name
+      },
+      {
+        name  = "DD_TRACE_AGENT_URL"
+        value = "unix:///var/run/datadog/apm.socket"
+      }
+    ] : []
+  )
+
+  app_container_definition = merge(
+    {
+      name      = "app"
+      image     = var.container_image
+      essential = true
+      portMappings = [
+        {
+          containerPort = var.container_port
+          hostPort      = var.container_port
+          protocol      = "tcp"
+        }
+      ]
+      environment = local.app_environment
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-region        = var.region
+          awslogs-group         = aws_cloudwatch_log_group.ecs.name
+          awslogs-stream-prefix = "${local.name_prefix}"
+        }
+      }
+    },
+    var.enable_datadog_agent
+    ? {
+      entryPoint = ["sh", "-c"]
+      command = [
+        "export DD_AGENT_HOST=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4); exec java -javaagent=${var.datadog_java_agent_path} $JAVA_TOOL_OPTIONS -jar app.jar"
+      ]
+    }
+    : {
+      entryPoint = ["sh", "-c"]
+      command    = ["exec java $JAVA_TOOL_OPTIONS -jar app.jar"]
+    },
+    var.enable_datadog_agent ? {
+      mountPoints = [
+        {
+          containerPath = "/var/run/datadog"
+          sourceVolume  = "dd-sockets"
+        }
+      ]
+    } : {}
+  )
+
+  datadog_environment = var.enable_datadog_agent ? concat(
+    [
+      {
+        name  = "DD_SITE"
+        value = var.datadog_site
+      },
+      {
+        name  = "ECS_FARGATE"
+        value = "true"
+      },
+      {
+        name  = "DD_APM_ENABLED"
+        value = var.datadog_apm_enabled ? "true" : "false"
+      },
+      {
+        name  = "DD_LOGS_ENABLED"
+        value = var.datadog_logs_enabled ? "true" : "false"
+      }
+    ],
+    var.datadog_tags == null
+    ? []
+    : [
+      {
+        name  = "DD_TAGS"
+        value = var.datadog_tags
+      }
+    ]
+  ) : []
+
+  datadog_container_definition = var.enable_datadog_agent ? merge(
+    {
+      name              = "datadog-agent"
+      image             = var.datadog_agent_image
+      essential         = false
+      cpu               = 64
+      memoryReservation = 256
+      environment       = local.datadog_environment
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-region        = var.region
+          awslogs-group         = aws_cloudwatch_log_group.ecs.name
+          awslogs-stream-prefix = "${local.name_prefix}-datadog"
+        }
+      }
+    },
+    var.datadog_api_key_secret_arn == null
+    ? {}
+    : {
+      secrets = [
+        {
+          name      = "DD_API_KEY"
+          valueFrom = var.datadog_api_key_secret_arn
+        }
+      ]
+    },
+    {
+      mountPoints = [
+        {
+          containerPath = "/var/run/datadog"
+          sourceVolume  = "dd-sockets"
+        }
+      ]
+    }
+  ) : null
+
+  container_definitions_list = [for c in [local.app_container_definition, local.datadog_container_definition] : c if c != null]
+  container_definitions_json = jsonencode(local.container_definitions_list)
+
+  datadog_volumes = var.enable_datadog_agent ? ["dd-sockets"] : []
 }
 
 resource "aws_vpc" "this" {
@@ -204,6 +346,158 @@ resource "aws_iam_role" "ecs_task" {
   assume_role_policy = data.aws_iam_policy_document.ecs_task_execution.json
 }
 
+resource "aws_iam_role" "datadog_task" {
+  count = var.enable_datadog_agent ? 1 : 0
+
+  name               = "${local.name_prefix}-datadog-task-role"
+  assume_role_policy = data.aws_iam_policy_document.ecs_task_execution.json
+}
+
+resource "aws_iam_role_policy" "datadog_task_default" {
+  count = var.enable_datadog_agent ? 1 : 0
+
+  name = "${local.name_prefix}-datadog-task-default-policy"
+  role = aws_iam_role.datadog_task[0].id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ecs:ListClusters",
+          "ecs:ListContainerInstances",
+          "ecs:DescribeContainerInstances"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role" "datadog_task_execution" {
+  count = var.enable_datadog_agent ? 1 : 0
+
+  name               = "${local.name_prefix}-datadog-task-execution-role"
+  assume_role_policy = data.aws_iam_policy_document.ecs_task_execution.json
+  path               = "/"
+}
+
+resource "aws_iam_role_policy_attachment" "datadog_task_execution_default" {
+  count = var.enable_datadog_agent ? 1 : 0
+
+  role       = aws_iam_role.datadog_task_execution[0].name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "datadog_task_execution_cloudwatch" {
+  count = var.enable_datadog_agent ? 1 : 0
+
+  role       = aws_iam_role.datadog_task_execution[0].name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
+
+resource "aws_iam_role_policy" "datadog_task_execution_secret" {
+  count = var.enable_datadog_agent && var.datadog_api_key_secret_arn != null ? 1 : 0
+
+  name = "${local.name_prefix}-datadog-secret-access"
+  role = aws_iam_role.datadog_task_execution[0].id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["secretsmanager:GetSecretValue"]
+        Resource = var.datadog_api_key_secret_arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_openid_connect_provider" "github" {
+  count = var.github_oidc_provider_arn == null ? 1 : 0
+
+  url             = "https://token.actions.githubusercontent.com"
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1"]
+
+  tags = {
+    Name = "${local.name_prefix}-github-oidc"
+  }
+}
+
+resource "aws_iam_role" "github_actions" {
+  name = "${local.name_prefix}-github-actions-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = coalesce(
+            var.github_oidc_provider_arn,
+            try(aws_iam_openid_connect_provider.github[0].arn, null)
+          )
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+            "token.actions.githubusercontent.com:sub" = local.github_subject
+          }
+        }
+      }
+    ]
+  })
+}
+
+data "aws_iam_policy_document" "github_actions" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "ecs:DescribeClusters",
+      "ecs:DescribeServices",
+      "ecs:DescribeTaskDefinition",
+      "ecs:DescribeTasks",
+      "ecs:ListTasks",
+      "ecs:RegisterTaskDefinition",
+      "ecs:UpdateService"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:CompleteLayerUpload",
+      "ecr:DescribeImages",
+      "ecr:DescribeRepositories",
+      "ecr:GetAuthorizationToken",
+      "ecr:InitiateLayerUpload",
+      "ecr:ListImages",
+      "ecr:PutImage",
+      "ecr:UploadLayerPart"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    effect  = "Allow"
+    actions = ["iam:PassRole"]
+    resources = [
+      aws_iam_role.ecs_task_execution.arn,
+      aws_iam_role.ecs_task.arn
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "github_actions" {
+  name   = "${local.name_prefix}-github-actions-policy"
+  role   = aws_iam_role.github_actions.id
+  policy = data.aws_iam_policy_document.github_actions.json
+}
+
 resource "aws_ecs_cluster" "this" {
   name = "${local.name_prefix}-cluster"
 }
@@ -214,37 +508,17 @@ resource "aws_ecs_task_definition" "this" {
   network_mode             = "awsvpc"
   cpu                      = var.task_cpu
   memory                   = var.task_memory
-  execution_role_arn       = aws_iam_role.ecs_task_execution.arn
-  task_role_arn            = aws_iam_role.ecs_task.arn
+  execution_role_arn       = var.enable_datadog_agent ? aws_iam_role.datadog_task_execution[0].arn : aws_iam_role.ecs_task_execution.arn
+  task_role_arn            = var.enable_datadog_agent ? aws_iam_role.datadog_task[0].arn : aws_iam_role.ecs_task.arn
 
-  container_definitions = jsonencode([
-    {
-      name      = "app"
-      image     = var.container_image
-      essential = true
-      portMappings = [
-        {
-          containerPort = var.container_port
-          hostPort      = var.container_port
-          protocol      = "tcp"
-        }
-      ]
-      environment = [
-        {
-          name  = "JAVA_TOOL_OPTIONS"
-          value = var.jvm_tool_options
-        }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-region        = var.region
-          awslogs-group         = aws_cloudwatch_log_group.ecs.name
-          awslogs-stream-prefix = "${local.name_prefix}"
-        }
-      }
+  container_definitions = local.container_definitions_json
+
+  dynamic "volume" {
+    for_each = local.datadog_volumes
+    content {
+      name = volume.value
     }
-  ])
+  }
 
   runtime_platform {
     operating_system_family = "LINUX"
@@ -254,6 +528,11 @@ resource "aws_ecs_task_definition" "this" {
   lifecycle {
     # Permite que o pipeline registre novas task definitions sem gerar drift no Terraform
     ignore_changes = [container_definitions]
+
+    precondition {
+      condition     = !(var.enable_datadog_agent && var.datadog_api_key_secret_arn == null)
+      error_message = "Quando enable_datadog_agent for true, informe datadog_api_key_secret_arn com o ARN do secret contendo a chave do Datadog."
+    }
   }
 }
 
@@ -278,4 +557,8 @@ resource "aws_ecs_service" "this" {
   }
 
   depends_on = [aws_lb_listener.http]
+
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
 }

@@ -22,3 +22,8 @@ output "load_balancer_dns" {
   description = "Endpoint HTTP público do ALB"
   value       = aws_lb.this.dns_name
 }
+
+output "github_actions_role_arn" {
+  description = "ARN da role IAM usada pelo GitHub Actions para deploy"
+  value       = aws_iam_role.github_actions.arn
+}
