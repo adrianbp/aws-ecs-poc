@@ -19,6 +19,7 @@ env:
   DEFAULT_JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
   DATADOG_SECRET_NAME: ${{ vars.DATADOG_SECRET_NAME }}
   DATADOG_SITE: ${{ vars.DATADOG_SITE }}
+  DATADOG_SECRET_ARN_VAR: ${{ vars.DATADOG_API_KEY_SECRET_ARN }}
 
 jobs:
   build-and-deploy:
@@ -77,10 +78,18 @@ jobs:
         env:
           IMAGE_URI: ${{ steps.build-image.outputs.image_uri }}
           DATADOG_SITE: ${{ env.DATADOG_SITE }}
+          DATADOG_SECRET_ARN_VAR: ${{ env.DATADOG_SECRET_ARN_VAR }}
         run: |
           set -euo pipefail
           DD_SECRET_ARN="${{ secrets.DATADOG_API_KEY_SECRET_ARN }}"
           DD_SECRET_SOURCE="secrets.DATADOG_API_KEY_SECRET_ARN"
+
+          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "null" ]; then
+            if [ -n "${DATADOG_SECRET_ARN_VAR:-}" ] && [ "${DATADOG_SECRET_ARN_VAR}" != "null" ]; then
+              DD_SECRET_ARN="$DATADOG_SECRET_ARN_VAR"
+              DD_SECRET_SOURCE="vars.DATADOG_API_KEY_SECRET_ARN"
+            fi
+          fi
 
           if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "null" ]; then
             SECRET_NAME="${DATADOG_SECRET_NAME:-ecs-demo-dev-datadog-api-key}"
@@ -93,7 +102,7 @@ jobs:
             fi
           fi
 
-          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "-" ] || [ "$DD_SECRET_ARN" = "null" ]; then
+          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "-" ] || [ "$DD_SECRET_ARN" = "null" ] || [ "$DD_SECRET_ARN" = "None" ]; then
             echo "::error::Datadog secret ARN could not be resolved (value: '${DD_SECRET_ARN:-<empty>}')." >&2
             exit 1
           fi
