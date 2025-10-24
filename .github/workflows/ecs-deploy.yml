@@ -80,7 +80,7 @@ jobs:
           DD_SECRET_ARN="${{ secrets.DATADOG_API_KEY_SECRET_ARN }}"
           DD_SECRET_SOURCE="secrets.DATADOG_API_KEY_SECRET_ARN"
 
-          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "null" ] || [ "$DD_SECRET_ARN" = "-" ]; then
+          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "null" ]; then
             SECRET_NAME="${DATADOG_SECRET_NAME:-ecs-demo-dev-datadog-api-key}"
             if [ -n "$SECRET_NAME" ]; then
               DD_SECRET_SOURCE="secretsmanager:$SECRET_NAME"
@@ -103,10 +103,7 @@ jobs:
             --query 'taskDefinition' \
             > task-def.json
 
-          jq --arg image "$IMAGE_URI" \
-             --arg java_opts "$JAVA_TOOL_OPTIONS" \
-             --arg dd_secret "$DD_SECRET_ARN" \
-             --arg app_cmd 'export DD_AGENT_HOST=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4); exec java -javaagent:/opt/datadog/dd-java-agent.jar $JAVA_TOOL_OPTIONS -jar app.jar' '
+          jq --arg image "$IMAGE_URI" --arg java_opts "$JAVA_TOOL_OPTIONS" --arg dd_secret "$DD_SECRET_ARN" '
             def clean: del(
               .taskDefinitionArn,
               .revision,
@@ -123,8 +120,6 @@ jobs:
             | (.containerDefinitions) = (.containerDefinitions | map(
                 if .name == "app" then
                   .image = $image
-                  | .entryPoint = ["sh", "-c"]
-                  | .command = [$app_cmd]
                   | .environment = ((.environment // [])
                       | map(select(.name != "JAVA_TOOL_OPTIONS"))
                       + [{"name": "JAVA_TOOL_OPTIONS", "value": $java_opts}])
