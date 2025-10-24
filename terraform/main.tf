@@ -62,7 +62,7 @@ locals {
     ? {
       entryPoint = ["sh", "-c"]
       command = [
-        "export DD_AGENT_HOST=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4); exec java -javaagent=${var.datadog_java_agent_path} $JAVA_TOOL_OPTIONS -jar app.jar"
+        "export DD_AGENT_HOST=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4); exec java -javaagent:${var.datadog_java_agent_path} $JAVA_TOOL_OPTIONS -jar app.jar"
       ]
     }
     : {
@@ -552,6 +552,15 @@ data "aws_iam_policy_document" "github_actions" {
         aws_iam_role.datadog_task[0].arn
       ] : []
     )
+  }
+
+  dynamic "statement" {
+    for_each = length(local.datadog_secret_arns) > 0 ? [1] : []
+    content {
+      effect    = "Allow"
+      actions   = ["secretsmanager:DescribeSecret"]
+      resources = local.datadog_secret_arns
+    }
   }
 }
 

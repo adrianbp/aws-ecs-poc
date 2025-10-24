@@ -103,7 +103,10 @@ jobs:
             --query 'taskDefinition' \
             > task-def.json
 
-          jq --arg image "$IMAGE_URI" --arg java_opts "$JAVA_TOOL_OPTIONS" --arg dd_secret "$DD_SECRET_ARN" '
+          jq --arg image "$IMAGE_URI" \
+             --arg java_opts "$JAVA_TOOL_OPTIONS" \
+             --arg dd_secret "$DD_SECRET_ARN" \
+             --arg app_cmd 'export DD_AGENT_HOST=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4); exec java -javaagent:/opt/datadog/dd-java-agent.jar $JAVA_TOOL_OPTIONS -jar app.jar' '
             def clean: del(
               .taskDefinitionArn,
               .revision,
@@ -120,6 +123,8 @@ jobs:
             | (.containerDefinitions) = (.containerDefinitions | map(
                 if .name == "app" then
                   .image = $image
+                  | .entryPoint = ["sh", "-c"]
+                  | .command = [$app_cmd]
                   | .environment = ((.environment // [])
                       | map(select(.name != "JAVA_TOOL_OPTIONS"))
                       + [{"name": "JAVA_TOOL_OPTIONS", "value": $java_opts}])
