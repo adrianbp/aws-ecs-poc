@@ -2,6 +2,8 @@ provider "aws" {
   region = var.region
 }
 
+data "aws_caller_identity" "current" {}
+
 locals {
   name_prefix    = "${var.project_name}-${var.environment}"
   subnet_config  = { for idx, az in var.availability_zones : az => var.public_subnet_cidrs[idx] }
@@ -168,6 +170,9 @@ locals {
       )
     )
   ) : []
+  datadog_ssm_parameter_arns = var.enable_datadog_agent ? [
+    "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/*"
+  ] : []
 }
 
 resource "aws_vpc" "this" {
@@ -456,9 +461,10 @@ resource "aws_iam_role_policy" "datadog_task_execution_secret" {
         Effect = "Allow"
         Action = [
           "secretsmanager:DescribeSecret",
-          "secretsmanager:GetSecretValue"
+          "secretsmanager:GetSecretValue",
+          "ssm:GetParameters"
         ]
-        Resource = local.datadog_secret_arns
+        Resource = concat(local.datadog_secret_arns, local.datadog_ssm_parameter_arns)
       }
     ]
   })
