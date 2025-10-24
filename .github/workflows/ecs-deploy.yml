@@ -18,6 +18,7 @@ env:
   TASK_DEFINITION_FAMILY: ${{ secrets.TASK_DEFINITION_FAMILY }}
   DEFAULT_JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
   DATADOG_SECRET_NAME: ${{ vars.DATADOG_SECRET_NAME }}
+  DATADOG_SITE: ${{ vars.DATADOG_SITE }}
 
 jobs:
   build-and-deploy:
@@ -75,6 +76,7 @@ jobs:
         id: task-def
         env:
           IMAGE_URI: ${{ steps.build-image.outputs.image_uri }}
+          DATADOG_SITE: ${{ env.DATADOG_SITE }}
         run: |
           set -euo pipefail
           DD_SECRET_ARN="${{ secrets.DATADOG_API_KEY_SECRET_ARN }}"
@@ -103,7 +105,11 @@ jobs:
             --query 'taskDefinition' \
             > task-def.json
 
-          jq --arg image "$IMAGE_URI" --arg java_opts "$JAVA_TOOL_OPTIONS" --arg dd_secret "$DD_SECRET_ARN" '
+          jq --arg image "$IMAGE_URI" \
+            --arg java_opts "$JAVA_TOOL_OPTIONS" \
+            --arg dd_secret "$DD_SECRET_ARN" \
+            --arg dd_site "${DATADOG_SITE:-datadoghq.com}" \
+            --arg app_cmd 'export DD_AGENT_HOST=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4); exec java -javaagent:/opt/datadog/dd-java-agent.jar $JAVA_TOOL_OPTIONS -jar app.jar' '
             def clean: del(
               .taskDefinitionArn,
               .revision,
@@ -120,11 +126,16 @@ jobs:
             | (.containerDefinitions) = (.containerDefinitions | map(
                 if .name == "app" then
                   .image = $image
+                  | .entryPoint = ["sh", "-c"]
+                  | .command = [$app_cmd]
                   | .environment = ((.environment // [])
                       | map(select(.name != "JAVA_TOOL_OPTIONS"))
                       + [{"name": "JAVA_TOOL_OPTIONS", "value": $java_opts}])
                 elif .name == "datadog-agent" then
                   .secrets = ([{"name": "DD_API_KEY", "valueFrom": $dd_secret}])
+                  | .environment = ((.environment // [])
+                      | map(select(.name != "DD_SITE"))
+                      + [{"name": "DD_SITE", "value": $dd_site}])
                 else . end
               ))
           ' task-def.json > new-task-def.json
