@@ -1,0 +1,126 @@
+name: Deploy to ECS
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      java_tool_options:
+        description: "Override JAVA_TOOL_OPTIONS (leave blank to use secret/variable/default)"
+        required: false
+        default: ""
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
+  ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
+  TASK_DEFINITION_FAMILY: ${{ secrets.TASK_DEFINITION_FAMILY }}
+  DEFAULT_JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve JAVA_TOOL_OPTIONS
+        run: |
+          set -euo pipefail
+          if [ -n "${{ github.event.inputs.java_tool_options }}" ]; then
+            echo "JAVA_TOOL_OPTIONS=${{ github.event.inputs.java_tool_options }}" >> "$GITHUB_ENV"
+          elif [ -n "${{ secrets.JAVA_TOOL_OPTIONS }}" ]; then
+            echo "JAVA_TOOL_OPTIONS=${{ secrets.JAVA_TOOL_OPTIONS }}" >> "$GITHUB_ENV"
+          elif [ -n "${{ vars.JAVA_TOOL_OPTIONS }}" ]; then
+            echo "JAVA_TOOL_OPTIONS=${{ vars.JAVA_TOOL_OPTIONS }}" >> "$GITHUB_ENV"
+          else
+            echo "JAVA_TOOL_OPTIONS=$DEFAULT_JAVA_TOOL_OPTIONS" >> "$GITHUB_ENV"
+          fi
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Build with Maven
+        run: mvn -B -f service/pom.xml clean package
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push image
+        id: build-image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          IMAGE_URI="${{ env.ECR_REPOSITORY }}:$IMAGE_TAG"
+          docker build -t "$IMAGE_URI" service
+          docker push "$IMAGE_URI"
+          echo "image_uri=$IMAGE_URI" >> "$GITHUB_OUTPUT"
+
+      - name: Render task definition
+        id: task-def
+        env:
+          IMAGE_URI: ${{ steps.build-image.outputs.image_uri }}
+        run: |
+          set -euo pipefail
+          aws ecs describe-task-definition \
+            --task-definition "$TASK_DEFINITION_FAMILY" \
+            --query 'taskDefinition' \
+            > task-def.json
+
+          jq --arg image "$IMAGE_URI" --arg java_opts "$JAVA_TOOL_OPTIONS" '
+            def clean: del(
+              .taskDefinitionArn,
+              .revision,
+              .status,
+              .registeredAt,
+              .registeredBy,
+              .deregisteredAt,
+              .compatibilities,
+              .requiresAttributes,
+              .inferenceAccelerators,
+              .tags
+            );
+            clean
+            | (.containerDefinitions) = (.containerDefinitions | map(
+                if .name == "app" then
+                  .image = $image
+                  | .environment = ((.environment // [])
+                      | map(select(.name != "JAVA_TOOL_OPTIONS"))
+                      + [{"name": "JAVA_TOOL_OPTIONS", "value": $java_opts}])
+                else . end
+              ))
+          ' task-def.json > new-task-def.json
+
+          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://new-task-def.json \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+
+          echo "task_definition_arn=$NEW_TASK_DEF_ARN" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy service
+        env:
+          TASK_DEFINITION_ARN: ${{ steps.task-def.outputs.task_definition_arn }}
+        run: |
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service "$ECS_SERVICE" \
+            --task-definition "$TASK_DEFINITION_ARN"
+
+          aws ecs wait services-stable \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE"

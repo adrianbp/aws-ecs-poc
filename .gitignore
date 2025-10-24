@@ -1,0 +1,25 @@
+# Java / Maven
+service/target/
+service/.idea/
+service/.classpath
+service/.project
+service/.settings/
+
+# Eclipse / IntelliJ swap
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.*
+terraform/crash.log
+
+# k6 artifacts
+k6/results/
