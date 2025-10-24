@@ -5,14 +5,12 @@ COPY pom.xml .
 COPY src ./src
 RUN mvn -B -DskipTests clean package
 
-# Runtime stage: Amazon Linux com Corretto 21 headless
-FROM amazonlinux:2023
-RUN dnf update -y \
-    && dnf install -y dnf-plugins-core \
-    && dnf config-manager --add-repo https://rpm.corretto.aws/corretto.repo \
-    && dnf install -y java-21-amazon-corretto-headless curl \
-    && dnf clean all \
-    && rm -rf /var/cache/dnf
+# Runtime stage: Amazon Corretto 21 (Amazon Linux 2)
+FROM amazoncorretto:21-al2-jdk
+RUN yum update -y \
+    && yum install -y curl \
+    && yum clean all \
+    && rm -rf /var/cache/yum
 
 WORKDIR /app
 COPY --from=build /workspace/target/ecs-demo-0.0.1-SNAPSHOT.jar app.jar
