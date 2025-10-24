@@ -91,7 +91,7 @@ jobs:
             fi
           fi
 
-          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "null" ]; then
+          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "null" ] || [ "$DD_SECRET_ARN" = "-" ]; then
             SECRET_NAME="${DATADOG_SECRET_NAME:-ecs-demo-dev-datadog-api-key}"
             if [ -n "$SECRET_NAME" ]; then
               DD_SECRET_SOURCE="secretsmanager:$SECRET_NAME"
