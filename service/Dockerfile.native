@@ -28,7 +28,7 @@ WORKDIR /app
 
 # Copia o binário e bibliotecas necessárias
 COPY --from=build /workspace/target/ecs-demo ./ecs-demo
-COPY --from=build /lib/x86_64-linux-gnu/libz.so.1* /lib/x86_64-linux-gnu/
+COPY --from=build /usr/lib/x86_64-linux-gnu/libz.so* /lib/
 
 # Cria usuário não privilegiado para execução
 USER 1000
@@ -36,7 +36,7 @@ USER 1000
 ENV SERVER_PORT=8080 \
     DD_TRACE_ENABLED=true \
     DD_PROFILING_ENABLED=true \
-    LD_LIBRARY_PATH=/app:/lib/x86_64-linux-gnu
+    LD_LIBRARY_PATH=/app:/lib
 
 EXPOSE 8080
 ENTRYPOINT ["./ecs-demo"]
