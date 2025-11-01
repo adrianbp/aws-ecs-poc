@@ -28,7 +28,6 @@ WORKDIR /app
 
 # Copia o binário e bibliotecas necessárias
 COPY --from=build /workspace/target/ecs-demo ./ecs-demo
-WORKDIR /app/ecs-demo
 
 # Cria usuário não privilegiado para execução
 USER 1000
@@ -36,7 +35,7 @@ USER 1000
 ENV SERVER_PORT=8080 \
     DD_TRACE_ENABLED=true \
     DD_PROFILING_ENABLED=true \
-    LD_LIBRARY_PATH=/app/ecs-demo/lib
+    LD_LIBRARY_PATH=/app
 
 EXPOSE 8080
 ENTRYPOINT ["./ecs-demo"]
