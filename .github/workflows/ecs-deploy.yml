@@ -176,7 +176,7 @@ jobs:
   build-and-deploy-native:
     runs-on: ubuntu-latest
     needs: build-and-deploy
-    if: env.NATIVE_SERVICE_ENABLED == 'true'
+    if: ${{ env.NATIVE_SERVICE_ENABLED == 'true' }}
     permissions:
       id-token: write
       contents: read
