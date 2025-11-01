@@ -20,7 +20,6 @@ env:
   DATADOG_SECRET_NAME: ${{ vars.DATADOG_SECRET_NAME }}
   DATADOG_SITE: ${{ vars.DATADOG_SITE }}
   DATADOG_SECRET_ARN_VAR: ${{ vars.DATADOG_API_KEY_SECRET_ARN }}
-  NATIVE_SERVICE_ENABLED: ${{ vars.NATIVE_SERVICE_ENABLED }}
   NATIVE_ECR_REPOSITORY: ${{ secrets.NATIVE_ECR_REPOSITORY }}
   NATIVE_ECS_SERVICE: ${{ secrets.NATIVE_ECS_SERVICE }}
   NATIVE_TASK_DEFINITION_FAMILY: ${{ secrets.NATIVE_TASK_DEFINITION_FAMILY }}
@@ -176,7 +175,6 @@ jobs:
   build-and-deploy-native:
     runs-on: ubuntu-latest
     needs: build-and-deploy
-    if: ${{ env.NATIVE_SERVICE_ENABLED == 'true' }}
     permissions:
       id-token: write
       contents: read
