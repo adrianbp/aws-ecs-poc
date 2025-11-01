@@ -180,10 +180,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    env:
-      ECR_REPOSITORY: ${{ env.NATIVE_ECR_REPOSITORY }}
-      ECS_SERVICE: ${{ env.NATIVE_ECS_SERVICE }}
-      TASK_DEFINITION_FAMILY: ${{ env.NATIVE_TASK_DEFINITION_FAMILY }}
 
     steps:
       - name: Checkout
@@ -202,8 +198,9 @@ jobs:
         id: build-native-image
         env:
           IMAGE_TAG: ${{ github.sha }}
+          ECR_REPOSITORY: ${{ env.NATIVE_ECR_REPOSITORY }}
         run: |
-          IMAGE_URI="${{ env.ECR_REPOSITORY }}:$IMAGE_TAG"
+          IMAGE_URI="$ECR_REPOSITORY:$IMAGE_TAG"
           docker build -f service/Dockerfile.native -t "$IMAGE_URI" service
           docker push "$IMAGE_URI"
           echo "image_uri=$IMAGE_URI" >> "$GITHUB_OUTPUT"
@@ -214,6 +211,7 @@ jobs:
           IMAGE_URI: ${{ steps.build-native-image.outputs.image_uri }}
           DATADOG_SITE: ${{ env.DATADOG_SITE }}
           DATADOG_SECRET_ARN_VAR: ${{ env.DATADOG_SECRET_ARN_VAR }}
+          TASK_DEFINITION_FAMILY: ${{ env.NATIVE_TASK_DEFINITION_FAMILY }}
         run: |
           set -euo pipefail
           DD_SECRET_ARN="${{ secrets.DATADOG_API_KEY_SECRET_ARN }}"
@@ -287,6 +285,7 @@ jobs:
       - name: Deploy native service
         env:
           TASK_DEFINITION_ARN: ${{ steps.native-task-def.outputs.task_definition_arn }}
+          ECS_SERVICE: ${{ env.NATIVE_ECS_SERVICE }}
         run: |
           aws ecs update-service \
             --cluster "$ECS_CLUSTER" \
