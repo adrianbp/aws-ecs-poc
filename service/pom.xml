@@ -93,7 +93,7 @@
                             <buildArgs>
                                 <buildArg>-J-javaagent:${project.build.directory}/datadog/dd-java-agent.jar</buildArg>
                                 <buildArg>-O3</buildArg>
-                                <buildArg>-march=native</buildArg>
+                                <buildArg>-march=x86-64</buildArg>
                                 <buildArg>--enable-monitoring=jfr</buildArg>
                             </buildArgs>
                             <jvmArgs>
