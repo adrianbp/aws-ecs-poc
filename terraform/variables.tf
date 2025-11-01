@@ -41,8 +41,26 @@ variable "desired_count" {
   default     = 0
 }
 
+variable "native_service_enabled" {
+  description = "Habilita o provisionamento da versão nativa"
+  type        = bool
+  default     = false
+}
+
+variable "native_desired_count" {
+  description = "Quantidade de tarefas ECS desejadas para o serviço nativo"
+  type        = number
+  default     = 0
+}
+
 variable "task_cpu" {
   description = "CPU (em unidades vCPU) para a task Fargate"
+  type        = number
+  default     = 512
+}
+
+variable "native_task_cpu" {
+  description = "CPU (em unidades vCPU) da task Fargate nativa"
   type        = number
   default     = 512
 }
@@ -53,14 +71,32 @@ variable "task_memory" {
   default     = 1024
 }
 
+variable "native_task_memory" {
+  description = "Memória (MB) da task Fargate nativa"
+  type        = number
+  default     = 1024
+}
+
 variable "container_image" {
   description = "Imagem do container (ex: <account>.dkr.ecr.<region>.amazonaws.com/repo:tag)"
   type        = string
   default     = "public.ecr.aws/amazonlinux/amazonlinux:2023"
 }
 
+variable "native_container_image" {
+  description = "Imagem do container nativo"
+  type        = string
+  default     = null
+}
+
 variable "container_port" {
   description = "Porta exposta pelo container"
+  type        = number
+  default     = 8080
+}
+
+variable "native_container_port" {
+  description = "Porta exposta pelo container nativo"
   type        = number
   default     = 8080
 }
@@ -71,10 +107,22 @@ variable "health_check_path" {
   default     = "/actuator/health"
 }
 
+variable "native_health_check_path" {
+  description = "Path de health-check do serviço nativo"
+  type        = string
+  default     = "/actuator/health"
+}
+
 variable "jvm_tool_options" {
   description = "Valor padrão para JAVA_TOOL_OPTIONS dentro do container"
   type        = string
   default     = "-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
+}
+
+variable "native_dd_service_name" {
+  description = "Valor do DD_SERVICE para o serviço nativo"
+  type        = string
+  default     = null
 }
 
 variable "log_retention_days" {

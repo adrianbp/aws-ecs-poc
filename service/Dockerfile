@@ -1,16 +1,15 @@
-# Build stage: compila o projeto usando Maven com Corretto 21
-FROM maven:3.9.8-amazoncorretto-21 AS build
+# Build stage: compila o projeto usando Maven com Temurin 25
+FROM maven:3.9-eclipse-temurin-25 AS build
 WORKDIR /workspace
 COPY pom.xml .
 COPY src ./src
 RUN mvn -B -DskipTests clean package
 
-# Runtime stage: Amazon Corretto 21 (Amazon Linux 2)
-FROM amazoncorretto:21-al2-jdk
-RUN yum update -y \
-    && yum install -y curl \
-    && yum clean all \
-    && rm -rf /var/cache/yum
+# Runtime stage: Eclipse Temurin 25 (Ubuntu Jammy)
+FROM eclipse-temurin:25-jre-jammy
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY --from=build /workspace/target/ecs-demo-0.0.1-SNAPSHOT.jar app.jar

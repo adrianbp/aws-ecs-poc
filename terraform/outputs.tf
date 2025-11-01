@@ -3,6 +3,11 @@ output "ecr_repository_url" {
   value       = aws_ecr_repository.this.repository_url
 }
 
+output "native_ecr_repository_url" {
+  description = "URI completo do repositório ECR para a imagem nativa"
+  value       = var.native_service_enabled ? aws_ecr_repository.native[0].repository_url : null
+}
+
 output "ecs_cluster_name" {
   description = "Nome do cluster ECS"
   value       = aws_ecs_cluster.this.name
@@ -13,9 +18,19 @@ output "ecs_service_name" {
   value       = aws_ecs_service.this.name
 }
 
+output "native_ecs_service_name" {
+  description = "Nome do serviço ECS nativo"
+  value       = var.native_service_enabled ? aws_ecs_service.native[0].name : null
+}
+
 output "task_definition_family" {
   description = "Família da task definition usada pelo serviço"
   value       = aws_ecs_task_definition.this.family
+}
+
+output "native_task_definition_family" {
+  description = "Família da task definition usada pelo serviço nativo"
+  value       = var.native_service_enabled ? aws_ecs_task_definition.native[0].family : null
 }
 
 output "load_balancer_dns" {

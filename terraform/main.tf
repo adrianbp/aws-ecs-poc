@@ -5,9 +5,11 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 
 locals {
-  name_prefix    = "${var.project_name}-${var.environment}"
-  subnet_config  = { for idx, az in var.availability_zones : az => var.public_subnet_cidrs[idx] }
-  github_subject = "repo:${var.github_owner}/${var.github_repository}:ref:refs/heads/${var.github_branch}"
+  name_prefix         = "${var.project_name}-${var.environment}"
+  subnet_config       = { for idx, az in var.availability_zones : az => var.public_subnet_cidrs[idx] }
+  github_subject      = "repo:${var.github_owner}/${var.github_repository}:ref:refs/heads/${var.github_branch}"
+  native_service_name = "${local.name_prefix}-native"
+  native_dd_service   = coalesce(var.native_dd_service_name, "${var.project_name}-native")
 
   app_environment = concat(
     [
@@ -150,8 +152,111 @@ locals {
     }
   ) : null
 
+  native_app_environment = var.native_service_enabled && var.enable_datadog_agent ? [
+    {
+      name  = "DD_AGENT_HOST"
+      value = "127.0.0.1"
+    },
+    {
+      name  = "DD_ENV"
+      value = var.environment
+    },
+    {
+      name  = "DD_SERVICE"
+      value = local.native_dd_service
+    },
+    {
+      name  = "DD_TRACE_AGENT_URL"
+      value = "unix:///var/run/datadog/apm.socket"
+    },
+    {
+      name  = "DD_TRACE_ENABLED"
+      value = "true"
+    },
+    {
+      name  = "DD_PROFILING_ENABLED"
+      value = "true"
+    },
+    {
+      name  = "DD_NATIVE_RUNTIME"
+      value = "graalvm"
+    }
+  ] : []
+
+  native_app_container_definition = var.native_service_enabled ? merge(
+    {
+      name      = "app-native"
+      image     = coalesce(var.native_container_image, var.container_image)
+      essential = true
+      portMappings = [
+        {
+          containerPort = var.native_container_port
+          hostPort      = var.native_container_port
+          protocol      = "tcp"
+        }
+      ]
+      environment = local.native_app_environment
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-region        = var.region
+          awslogs-group         = aws_cloudwatch_log_group.ecs.name
+          awslogs-stream-prefix = "${local.native_service_name}"
+        }
+      }
+    },
+    var.enable_datadog_agent ? {
+      mountPoints = [
+        {
+          containerPath = "/var/run/datadog"
+          sourceVolume  = "dd-sockets"
+        }
+      ]
+    } : {}
+  ) : null
+
+  native_datadog_container_definition = var.native_service_enabled && var.enable_datadog_agent ? merge(
+    {
+      name              = "datadog-agent-native"
+      image             = var.datadog_agent_image
+      essential         = false
+      cpu               = 64
+      memoryReservation = 256
+      environment       = local.datadog_environment
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-region        = var.region
+          awslogs-group         = aws_cloudwatch_log_group.ecs.name
+          awslogs-stream-prefix = "${local.native_service_name}-datadog"
+        }
+      }
+    },
+    local.datadog_secret_arn_primary == null
+    ? {}
+    : {
+      secrets = [
+        {
+          name      = "DD_API_KEY"
+          valueFrom = local.datadog_secret_arn_primary
+        }
+      ]
+    },
+    {
+      mountPoints = [
+        {
+          containerPath = "/var/run/datadog"
+          sourceVolume  = "dd-sockets"
+        }
+      ]
+    }
+  ) : null
+
   container_definitions_list = [for c in [local.app_container_definition, local.datadog_container_definition] : c if c != null]
   container_definitions_json = jsonencode(local.container_definitions_list)
+
+  native_container_definitions_list = [for c in [local.native_app_container_definition, local.native_datadog_container_definition] : c if c != null]
+  native_container_definitions_json = jsonencode(local.native_container_definitions_list)
 
   datadog_volumes = var.enable_datadog_agent ? ["dd-sockets"] : []
   datadog_secret_arns = var.enable_datadog_agent ? distinct(
@@ -173,6 +278,10 @@ locals {
   datadog_ssm_parameter_arns = var.enable_datadog_agent ? [
     "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/*"
   ] : []
+
+  ecs_task_allowed_ports = distinct(concat([
+    var.container_port
+  ], var.native_service_enabled ? [var.native_container_port] : []))
 }
 
 resource "aws_vpc" "this" {
@@ -258,12 +367,15 @@ resource "aws_security_group" "ecs_tasks" {
   description = "Permite trafego do ALB para as tasks ECS"
   vpc_id      = aws_vpc.this.id
 
-  ingress {
-    description     = "Trafego do ALB"
-    from_port       = var.container_port
-    to_port         = var.container_port
-    protocol        = "tcp"
-    security_groups = [aws_security_group.alb.id]
+  dynamic "ingress" {
+    for_each = toset(local.ecs_task_allowed_ports)
+    content {
+      description     = "Trafego do ALB"
+      from_port       = ingress.value
+      to_port         = ingress.value
+      protocol        = "tcp"
+      security_groups = [aws_security_group.alb.id]
+    }
   }
 
   egress {
@@ -312,6 +424,28 @@ resource "aws_lb_target_group" "this" {
   }
 }
 
+resource "aws_lb_target_group" "native" {
+  count       = var.native_service_enabled ? 1 : 0
+  name        = "${local.native_service_name}-tg"
+  port        = var.native_container_port
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = aws_vpc.this.id
+
+  health_check {
+    path                = var.native_health_check_path
+    matcher             = "200-399"
+    healthy_threshold   = 2
+    unhealthy_threshold = 5
+    timeout             = 5
+    interval            = 30
+  }
+
+  tags = {
+    Name = "${local.native_service_name}-tg"
+  }
+}
+
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.this.arn
   port              = 80
@@ -323,6 +457,23 @@ resource "aws_lb_listener" "http" {
   }
 }
 
+resource "aws_lb_listener_rule" "native" {
+  count        = var.native_service_enabled ? 1 : 0
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 100
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.native[0].arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/native", "/native/*", "/native*"]
+    }
+  }
+}
+
 resource "aws_cloudwatch_log_group" "ecs" {
   name              = "/aws/ecs/${local.name_prefix}"
   retention_in_days = var.log_retention_days
@@ -330,6 +481,16 @@ resource "aws_cloudwatch_log_group" "ecs" {
 
 resource "aws_ecr_repository" "this" {
   name                 = "${local.name_prefix}-service"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_repository" "native" {
+  count                = var.native_service_enabled ? 1 : 0
+  name                 = "${local.name_prefix}-native"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -604,6 +765,40 @@ resource "aws_ecs_task_definition" "this" {
   }
 }
 
+resource "aws_ecs_task_definition" "native" {
+  count                    = var.native_service_enabled ? 1 : 0
+  family                   = "${local.native_service_name}-task"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = var.native_task_cpu
+  memory                   = var.native_task_memory
+  execution_role_arn       = var.enable_datadog_agent ? aws_iam_role.datadog_task_execution[0].arn : aws_iam_role.ecs_task_execution.arn
+  task_role_arn            = var.enable_datadog_agent ? aws_iam_role.datadog_task[0].arn : aws_iam_role.ecs_task.arn
+
+  container_definitions = local.native_container_definitions_json
+
+  dynamic "volume" {
+    for_each = local.datadog_volumes
+    content {
+      name = volume.value
+    }
+  }
+
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture        = "X86_64"
+  }
+
+  lifecycle {
+    ignore_changes = [container_definitions]
+
+    precondition {
+      condition     = !(var.enable_datadog_agent && var.datadog_api_key_secret_arn == null && var.datadog_api_key_value == null)
+      error_message = "Quando enable_datadog_agent for true, informe datadog_api_key_secret_arn ou forneca datadog_api_key_value para criar o secret automaticamente."
+    }
+  }
+}
+
 resource "aws_ecs_service" "this" {
   name            = "${local.name_prefix}-service"
   cluster         = aws_ecs_cluster.this.id
@@ -622,6 +817,34 @@ resource "aws_ecs_service" "this" {
     target_group_arn = aws_lb_target_group.this.arn
     container_name   = "app"
     container_port   = var.container_port
+  }
+
+  depends_on = [aws_lb_listener.http]
+
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
+}
+
+resource "aws_ecs_service" "native" {
+  count           = var.native_service_enabled ? 1 : 0
+  name            = "${local.native_service_name}-service"
+  cluster         = aws_ecs_cluster.this.id
+  task_definition = aws_ecs_task_definition.native[0].arn
+  desired_count   = var.native_desired_count
+  launch_type     = "FARGATE"
+  propagate_tags  = "SERVICE"
+
+  network_configuration {
+    subnets          = [for subnet in aws_subnet.public : subnet.id]
+    security_groups  = [aws_security_group.ecs_tasks.id]
+    assign_public_ip = true
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.native[0].arn
+    container_name   = "app-native"
+    container_port   = var.native_container_port
   }
 
   depends_on = [aws_lb_listener.http]

@@ -20,6 +20,10 @@ env:
   DATADOG_SECRET_NAME: ${{ vars.DATADOG_SECRET_NAME }}
   DATADOG_SITE: ${{ vars.DATADOG_SITE }}
   DATADOG_SECRET_ARN_VAR: ${{ vars.DATADOG_API_KEY_SECRET_ARN }}
+  NATIVE_SERVICE_ENABLED: ${{ vars.NATIVE_SERVICE_ENABLED }}
+  NATIVE_ECR_REPOSITORY: ${{ secrets.NATIVE_ECR_REPOSITORY }}
+  NATIVE_ECS_SERVICE: ${{ secrets.NATIVE_ECS_SERVICE }}
+  NATIVE_TASK_DEFINITION_FAMILY: ${{ secrets.NATIVE_TASK_DEFINITION_FAMILY }}
 
 jobs:
   build-and-deploy:
@@ -48,8 +52,8 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'corretto'
-          java-version: '21'
+          distribution: 'temurin'
+          java-version: '25'
 
       - name: Build with Maven
         run: mvn -B -f service/pom.xml clean package
@@ -159,6 +163,130 @@ jobs:
       - name: Deploy service
         env:
           TASK_DEFINITION_ARN: ${{ steps.task-def.outputs.task_definition_arn }}
+        run: |
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service "$ECS_SERVICE" \
+            --task-definition "$TASK_DEFINITION_ARN"
+
+          aws ecs wait services-stable \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE"
+
+  build-and-deploy-native:
+    runs-on: ubuntu-latest
+    needs: build-and-deploy
+    if: env.NATIVE_SERVICE_ENABLED == 'true'
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      ECR_REPOSITORY: ${{ env.NATIVE_ECR_REPOSITORY }}
+      ECS_SERVICE: ${{ env.NATIVE_ECS_SERVICE }}
+      TASK_DEFINITION_FAMILY: ${{ env.NATIVE_TASK_DEFINITION_FAMILY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push native image
+        id: build-native-image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          IMAGE_URI="${{ env.ECR_REPOSITORY }}:$IMAGE_TAG"
+          docker build -f service/Dockerfile.native -t "$IMAGE_URI" service
+          docker push "$IMAGE_URI"
+          echo "image_uri=$IMAGE_URI" >> "$GITHUB_OUTPUT"
+
+      - name: Render native task definition
+        id: native-task-def
+        env:
+          IMAGE_URI: ${{ steps.build-native-image.outputs.image_uri }}
+          DATADOG_SITE: ${{ env.DATADOG_SITE }}
+          DATADOG_SECRET_ARN_VAR: ${{ env.DATADOG_SECRET_ARN_VAR }}
+        run: |
+          set -euo pipefail
+          DD_SECRET_ARN="${{ secrets.DATADOG_API_KEY_SECRET_ARN }}"
+          DD_SECRET_SOURCE="secrets.DATADOG_API_KEY_SECRET_ARN"
+
+          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "null" ]; then
+            if [ -n "${DATADOG_SECRET_ARN_VAR:-}" ] && [ "${DATADOG_SECRET_ARN_VAR}" != "null" ]; then
+              DD_SECRET_ARN="$DATADOG_SECRET_ARN_VAR"
+              DD_SECRET_SOURCE="vars.DATADOG_API_KEY_SECRET_ARN"
+            fi
+          fi
+
+          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "null" ] || [ "$DD_SECRET_ARN" = "-" ]; then
+            SECRET_NAME="${DATADOG_SECRET_NAME:-ecs-demo-dev-datadog-api-key}"
+            if [ -n "$SECRET_NAME" ]; then
+              DD_SECRET_SOURCE="secretsmanager:$SECRET_NAME"
+              DD_SECRET_ARN=$(aws secretsmanager describe-secret \
+                --secret-id "$SECRET_NAME" \
+                --query 'ARN' \
+                --output text)
+            fi
+          fi
+
+          if [ -z "$DD_SECRET_ARN" ] || [ "$DD_SECRET_ARN" = "-" ] || [ "$DD_SECRET_ARN" = "null" ] || [ "$DD_SECRET_ARN" = "None" ]; then
+            echo "::error::Datadog secret ARN could not be resolved (value: '${DD_SECRET_ARN:-<empty>}')." >&2
+            exit 1
+          fi
+
+          echo "::notice::Using Datadog secret from $DD_SECRET_SOURCE"
+
+          aws ecs describe-task-definition \
+            --task-definition "$TASK_DEFINITION_FAMILY" \
+            --query 'taskDefinition' \
+            > native-task-def.json
+
+          jq --arg image "$IMAGE_URI" \
+            --arg dd_secret "$DD_SECRET_ARN" \
+            --arg dd_site "${DATADOG_SITE:-datadoghq.com}" '
+            def clean: del(
+              .taskDefinitionArn,
+              .revision,
+              .status,
+              .registeredAt,
+              .registeredBy,
+              .deregisteredAt,
+              .compatibilities,
+              .requiresAttributes,
+              .inferenceAccelerators,
+              .tags
+            );
+            clean
+            | (.containerDefinitions) = (.containerDefinitions | map(
+                if .name == "app-native" then
+                  .image = $image
+                elif .name == "datadog-agent-native" then
+                  .secrets = ([{"name": "DD_API_KEY", "valueFrom": $dd_secret}])
+                  | .environment = ((.environment // [])
+                      | map(select(.name != "DD_SITE"))
+                      + [{"name": "DD_SITE", "value": $dd_site}])
+                else . end
+              ))
+          ' native-task-def.json > new-native-task-def.json
+
+          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://new-native-task-def.json \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+
+          echo "task_definition_arn=$NEW_TASK_DEF_ARN" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy native service
+        env:
+          TASK_DEFINITION_ARN: ${{ steps.native-task-def.outputs.task_definition_arn }}
         run: |
           aws ecs update-service \
             --cluster "$ECS_CLUSTER" \

@@ -6,8 +6,8 @@
 
     <parent>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.2</version>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.5.7</version>
         <relativePath/>
     </parent>
 
@@ -18,7 +18,9 @@
     <description>Spring Boot REST API para POC ECS</description>
 
     <properties>
-        <java.version>21</java.version>
+    <java.version>25</java.version>
+    <dd.trace.version>1.54.0</dd.trace.version>
+        <graalvm.native.maven.plugin.version>0.10.4</graalvm.native.maven.plugin.version>
     </properties>
 
     <dependencies>
@@ -29,6 +31,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.datadoghq</groupId>
+            <artifactId>dd-trace-api</artifactId>
+            <version>${dd.trace.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -45,4 +52,65 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>native</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-dd-java-agent</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.datadoghq</groupId>
+                                            <artifactId>dd-java-agent</artifactId>
+                                            <version>${dd.trace.version}</version>
+                                            <destFileName>dd-java-agent.jar</destFileName>
+                                            <outputDirectory>${project.build.directory}/datadog</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>${graalvm.native.maven.plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <imageName>${project.artifactId}</imageName>
+                            <mainClass>com.example.ecs.EcsDemoApplication</mainClass>
+                            <buildArgs>
+                                <buildArg>-J-javaagent:${project.build.directory}/datadog/dd-java-agent.jar</buildArg>
+                                <buildArg>-O3</buildArg>
+                                <buildArg>-march=native</buildArg>
+                                <buildArg>--enable-monitoring=jfr</buildArg>
+                            </buildArgs>
+                            <jvmArgs>
+                                <arg>-Ddd.profiling.enabled=true</arg>
+                                <arg>-Dnet.bytebuddy.safe=false</arg>
+                            </jvmArgs>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>compile-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

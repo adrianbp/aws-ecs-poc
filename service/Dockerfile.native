@@ -1,0 +1,42 @@
+# Build stage: compila a imagem nativa usando GraalVM Community 25
+FROM ghcr.io/graalvm/native-image-community:25 AS build
+WORKDIR /workspace
+
+# Instala dependências mínimas e Maven via distribuição binária
+ARG MAVEN_VERSION=3.9.9
+ARG MAVEN_BASE_URL=https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries
+ENV MAVEN_HOME=/opt/apache-maven-${MAVEN_VERSION}
+ENV PATH=$MAVEN_HOME/bin:$PATH
+
+RUN microdnf install -y --setopt=install_weak_deps=0 curl tar gzip findutils \
+    && curl -fsSL "${MAVEN_BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz" -o /tmp/maven.tar.gz \
+    && tar -xzf /tmp/maven.tar.gz -C /opt \
+    && ln -s ${MAVEN_HOME}/bin/mvn /usr/local/bin/mvn \
+    && rm -f /tmp/maven.tar.gz \
+    && microdnf clean all
+
+# Copia os artefatos do projeto
+COPY pom.xml .
+COPY src ./src
+
+# Gera o binário nativo com o profile dedicado
+RUN mvn -Pnative -Dmaven.test.skip=true -B clean package
+
+# Runtime stage: imagem enxuta com glibc para executar o binário
+FROM gcr.io/distroless/cc-debian12
+WORKDIR /app
+
+# Copia o binário e bibliotecas necessárias
+COPY --from=build /workspace/target/ecs-demo ./ecs-demo
+WORKDIR /app/ecs-demo
+
+# Cria usuário não privilegiado para execução
+USER 1000
+
+ENV SERVER_PORT=8080 \
+    DD_TRACE_ENABLED=true \
+    DD_PROFILING_ENABLED=true \
+    LD_LIBRARY_PATH=/app/ecs-demo/lib
+
+EXPOSE 8080
+ENTRYPOINT ["./ecs-demo"]
