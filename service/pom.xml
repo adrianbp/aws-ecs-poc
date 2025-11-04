@@ -104,6 +104,7 @@
                                         <environmentUrl>${env.DT_TENANT_URL}</environmentUrl>
                                         <apiToken>${env.DT_API_TOKEN}</apiToken>
                                     </agentDownload>
+                                    <agentOptions>loglevelcon=info</agentOptions>
                                 </configuration>
                             </execution>
                         </executions>
