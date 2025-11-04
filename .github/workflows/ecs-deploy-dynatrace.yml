@@ -10,7 +10,7 @@ on:
         required: false
         default: ""
       native_maven_profile:
-        description: "Override Maven profile for Dynatrace native image"
+        description: "Override Maven profiles for Dynatrace native image (comma-separated)"
         required: false
         default: ""
 
@@ -21,7 +21,7 @@ env:
   DYNATRACE_ECR_REPOSITORY: ${{ secrets.DYNATRACE_ECR_REPOSITORY }}
   DYNATRACE_ECS_SERVICE: ${{ secrets.DYNATRACE_ECS_SERVICE }}
   DYNATRACE_TASK_DEFINITION_FAMILY: ${{ secrets.DYNATRACE_TASK_DEFINITION_FAMILY }}
-  DYNATRACE_DEFAULT_MAVEN_PROFILE: native-dynatrace
+  DYNATRACE_DEFAULT_MAVEN_PROFILE: native,native-dynatrace
   DT_TENANT_URL: ${{ vars.DYNATRACE_ENVIRONMENT_URL }}
   DT_API_TOKEN: ${{ secrets.DYNATRACE_API_TOKEN }}
 

@@ -10,7 +10,7 @@ on:
         required: false
         default: ""
       native_maven_profile:
-        description: "Override Maven profile for native image (e.g. native, native-musl)"
+        description: "Override Maven profiles for native image (comma-separated, e.g. native,native-datadog)"
         required: false
         default: ""
 
@@ -27,7 +27,7 @@ env:
   NATIVE_ECR_REPOSITORY: ${{ secrets.NATIVE_ECR_REPOSITORY }}
   NATIVE_ECS_SERVICE: ${{ secrets.NATIVE_ECS_SERVICE }}
   NATIVE_TASK_DEFINITION_FAMILY: ${{ secrets.NATIVE_TASK_DEFINITION_FAMILY }}
-  NATIVE_MAVEN_PROFILE: native
+  NATIVE_MAVEN_PROFILE: native,native-datadog
 
 jobs:
   build-and-deploy:

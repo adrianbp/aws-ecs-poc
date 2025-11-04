@@ -2,7 +2,7 @@
 FROM ghcr.io/graalvm/native-image-community:25 AS build
 WORKDIR /workspace
 
-ARG NATIVE_MAVEN_PROFILE="native"
+ARG NATIVE_MAVEN_PROFILE="native,native-datadog"
 
 # Instala dependências mínimas e Maven via distribuição binária
 ARG MAVEN_VERSION=3.9.9

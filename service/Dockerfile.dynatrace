@@ -4,7 +4,7 @@ WORKDIR /workspace
 
 ARG MAVEN_VERSION=3.9.9
 ARG MAVEN_BASE_URL=https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries
-ARG NATIVE_MAVEN_PROFILE="native-dynatrace"
+ARG NATIVE_MAVEN_PROFILE="native,native-dynatrace"
 ARG DT_TENANT_URL=""
 ARG DT_API_TOKEN=""
 ENV MAVEN_HOME=/opt/apache-maven-${MAVEN_VERSION}
