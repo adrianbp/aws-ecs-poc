@@ -1,0 +1,49 @@
+# Build stage: gera binário nativo utilizando o profile Dynatrace
+FROM ghcr.io/graalvm/native-image-community:25 AS build
+WORKDIR /workspace
+
+ARG MAVEN_VERSION=3.9.9
+ARG MAVEN_BASE_URL=https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries
+ARG NATIVE_MAVEN_PROFILE="native-dynatrace"
+ARG DT_TENANT_URL=""
+ARG DT_API_TOKEN=""
+ENV MAVEN_HOME=/opt/apache-maven-${MAVEN_VERSION}
+ENV PATH=$MAVEN_HOME/bin:$PATH
+
+RUN microdnf install -y --setopt=install_weak_deps=0 curl tar gzip findutils \
+    && curl -fsSL "${MAVEN_BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz" -o /tmp/maven.tar.gz \
+    && tar -xzf /tmp/maven.tar.gz -C /opt \
+    && ln -s ${MAVEN_HOME}/bin/mvn /usr/local/bin/mvn \
+    && rm -f /tmp/maven.tar.gz \
+    && microdnf clean all
+
+COPY pom.xml .
+COPY src ./src
+
+RUN DT_TENANT_URL="$DT_TENANT_URL" \
+    DT_API_TOKEN="$DT_API_TOKEN" \
+    mvn -P"${NATIVE_MAVEN_PROFILE}" -Dmaven.test.skip=true -B clean package
+
+# Runtime stage minimalista baseado em Debian slim
+FROM debian:12-slim AS runtime
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        zlib1g \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY --from=build /workspace/target/ecs-demo ./ecs-demo
+COPY --from=build /workspace/target/dynatrace ./dynatrace
+
+RUN groupadd --system ecs \
+    && useradd --system --gid ecs --uid 1000 --no-create-home ecs \
+    && chown ecs:ecs ./ecs-demo \
+    && if [ -d ./dynatrace ]; then chown -R ecs:ecs ./dynatrace; fi
+USER 1000
+
+ENV SERVER_PORT=8080
+
+EXPOSE 8080
+ENTRYPOINT ["./ecs-demo"]

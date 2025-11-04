@@ -252,6 +252,92 @@ locals {
     }
   ) : null
 
+  dynatrace_service_name = "${local.name_prefix}-dynatrace"
+
+  dynatrace_app_environment = [
+    {
+      name  = "JAVA_TOOL_OPTIONS"
+      value = var.jvm_tool_options
+    }
+  ]
+
+  dynatrace_app_container_definition = var.dynatrace_service_enabled ? {
+    name      = "app-dynatrace"
+    image     = coalesce(var.dynatrace_container_image, var.container_image)
+    essential = true
+    portMappings = [
+      {
+        containerPort = var.dynatrace_container_port
+        hostPort      = var.dynatrace_container_port
+        protocol      = "tcp"
+      }
+    ]
+    environment = local.dynatrace_app_environment
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        awslogs-region        = var.region
+        awslogs-group         = aws_cloudwatch_log_group.ecs.name
+        awslogs-stream-prefix = "${local.dynatrace_service_name}"
+      }
+    }
+    dependsOn = [
+      {
+        containerName = "dynatrace-oneagent"
+        condition     = "START"
+      }
+    ]
+  } : null
+
+  dynatrace_secret_arn = var.dynatrace_service_enabled ? var.dynatrace_api_token_secret_arn : null
+
+  dynatrace_oneagent_environment = var.dynatrace_service_enabled ? [
+    for env in [
+      {
+        name  = "ONEAGENT_ENVIRONMENTID"
+        value = var.dynatrace_tenant_id
+      },
+      {
+        name  = "ONEAGENT_APIURL"
+        value = var.dynatrace_api_url
+      }
+    ] : env if try(env.value, null) != null && try(env.value, "") != ""
+  ] : []
+
+  dynatrace_oneagent_container_definition = var.dynatrace_service_enabled ? merge(
+    {
+      name        = "dynatrace-oneagent"
+      image       = var.dynatrace_oneagent_image
+      essential   = false
+      environment = local.dynatrace_oneagent_environment
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-region        = var.region
+          awslogs-group         = aws_cloudwatch_log_group.ecs.name
+          awslogs-stream-prefix = "${local.dynatrace_service_name}-oneagent"
+        }
+      }
+    },
+    local.dynatrace_secret_arn == null ? {} : {
+      secrets = [
+        {
+          name      = "ONEAGENT_APITOKEN"
+          valueFrom = local.dynatrace_secret_arn
+        }
+      ]
+    }
+  ) : null
+
+  dynatrace_container_definitions_list = [for c in [local.dynatrace_app_container_definition, local.dynatrace_oneagent_container_definition] : c if c != null]
+  dynatrace_container_definitions_json = jsonencode(local.dynatrace_container_definitions_list)
+
+  dynatrace_secret_arns = local.dynatrace_secret_arn == null ? [] : [
+    local.dynatrace_secret_arn,
+    "${local.dynatrace_secret_arn}:*",
+    "${local.dynatrace_secret_arn}-*"
+  ]
+
   container_definitions_list = [for c in [local.app_container_definition, local.datadog_container_definition] : c if c != null]
   container_definitions_json = jsonencode(local.container_definitions_list)
 
@@ -281,7 +367,11 @@ locals {
 
   ecs_task_allowed_ports = distinct(concat([
     var.container_port
-  ], var.native_service_enabled ? [var.native_container_port] : []))
+  ],
+  var.native_service_enabled ? [var.native_container_port] : [],
+  var.dynatrace_service_enabled ? [var.dynatrace_container_port] : []))
+
+  github_secret_describe_arns = distinct(concat(local.datadog_secret_arns, local.dynatrace_secret_arns))
 }
 
 resource "aws_vpc" "this" {
@@ -446,6 +536,28 @@ resource "aws_lb_target_group" "native" {
   }
 }
 
+resource "aws_lb_target_group" "dynatrace" {
+  count       = var.dynatrace_service_enabled ? 1 : 0
+  name        = "${local.dynatrace_service_name}-tg"
+  port        = var.dynatrace_container_port
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = aws_vpc.this.id
+
+  health_check {
+    path                = var.dynatrace_health_check_path
+    matcher             = "200-399"
+    healthy_threshold   = 2
+    unhealthy_threshold = 5
+    timeout             = 5
+    interval            = 30
+  }
+
+  tags = {
+    Name = "${local.dynatrace_service_name}-tg"
+  }
+}
+
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.this.arn
   port              = 80
@@ -474,6 +586,23 @@ resource "aws_lb_listener_rule" "native" {
   }
 }
 
+resource "aws_lb_listener_rule" "dynatrace" {
+  count        = var.dynatrace_service_enabled ? 1 : 0
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 110
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.dynatrace[0].arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/dynatrace", "/dynatrace/*", "/dynatrace*"]
+    }
+  }
+}
+
 resource "aws_cloudwatch_log_group" "ecs" {
   name              = "/aws/ecs/${local.name_prefix}"
   retention_in_days = var.log_retention_days
@@ -491,6 +620,16 @@ resource "aws_ecr_repository" "this" {
 resource "aws_ecr_repository" "native" {
   count                = var.native_service_enabled ? 1 : 0
   name                 = "${local.name_prefix}-native"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_repository" "dynatrace" {
+  count                = var.dynatrace_service_enabled ? 1 : 0
+  name                 = "${local.name_prefix}-dynatrace"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -627,6 +766,26 @@ resource "aws_iam_role_policy" "datadog_task_execution_secret" {
   })
 }
 
+resource "aws_iam_role_policy" "ecs_task_execution_dynatrace_secret" {
+  count = var.dynatrace_service_enabled && var.dynatrace_api_token_secret_arn != null ? 1 : 0
+
+  name = "${local.name_prefix}-dynatrace-secret-access"
+  role = aws_iam_role.ecs_task_execution.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = local.dynatrace_secret_arns
+      }
+    ]
+  })
+}
+
 resource "aws_iam_openid_connect_provider" "github" {
   count = var.github_oidc_provider_arn == null ? 1 : 0
 
@@ -712,11 +871,11 @@ data "aws_iam_policy_document" "github_actions" {
   }
 
   dynamic "statement" {
-    for_each = length(local.datadog_secret_arns) > 0 ? [1] : []
+    for_each = length(local.github_secret_describe_arns) > 0 ? [1] : []
     content {
       effect    = "Allow"
       actions   = ["secretsmanager:DescribeSecret"]
-      resources = local.datadog_secret_arns
+      resources = local.github_secret_describe_arns
     }
   }
 }
@@ -799,6 +958,33 @@ resource "aws_ecs_task_definition" "native" {
   }
 }
 
+resource "aws_ecs_task_definition" "dynatrace" {
+  count                    = var.dynatrace_service_enabled ? 1 : 0
+  family                   = "${local.dynatrace_service_name}-task"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = var.dynatrace_task_cpu
+  memory                   = var.dynatrace_task_memory
+  execution_role_arn       = aws_iam_role.ecs_task_execution.arn
+  task_role_arn            = aws_iam_role.ecs_task.arn
+
+  container_definitions = local.dynatrace_container_definitions_json
+
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture        = "X86_64"
+  }
+
+  lifecycle {
+    ignore_changes = [container_definitions]
+
+    precondition {
+      condition     = !(var.dynatrace_service_enabled && var.dynatrace_api_token_secret_arn == null)
+      error_message = "Quando dynatrace_service_enabled for true, informe dynatrace_api_token_secret_arn."
+    }
+  }
+}
+
 resource "aws_ecs_service" "this" {
   name            = "${local.name_prefix}-service"
   cluster         = aws_ecs_cluster.this.id
@@ -845,6 +1031,34 @@ resource "aws_ecs_service" "native" {
     target_group_arn = aws_lb_target_group.native[0].arn
     container_name   = "app-native"
     container_port   = var.native_container_port
+  }
+
+  depends_on = [aws_lb_listener.http]
+
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
+}
+
+resource "aws_ecs_service" "dynatrace" {
+  count           = var.dynatrace_service_enabled ? 1 : 0
+  name            = "${local.dynatrace_service_name}-service"
+  cluster         = aws_ecs_cluster.this.id
+  task_definition = aws_ecs_task_definition.dynatrace[0].arn
+  desired_count   = var.dynatrace_desired_count
+  launch_type     = "FARGATE"
+  propagate_tags  = "SERVICE"
+
+  network_configuration {
+    subnets          = [for subnet in aws_subnet.public : subnet.id]
+    security_groups  = [aws_security_group.ecs_tasks.id]
+    assign_public_ip = true
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.dynatrace[0].arn
+    container_name   = "app-dynatrace"
+    container_port   = var.dynatrace_container_port
   }
 
   depends_on = [aws_lb_listener.http]

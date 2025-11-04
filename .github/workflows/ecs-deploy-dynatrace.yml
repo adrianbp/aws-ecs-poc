@@ -1,0 +1,170 @@
+name: Deploy Dynatrace Variant
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      java_tool_options:
+        description: "Override JAVA_TOOL_OPTIONS (leave blank to use secret/variable/default)"
+        required: false
+        default: ""
+      native_maven_profile:
+        description: "Override Maven profile for Dynatrace native image"
+        required: false
+        default: ""
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
+  DEFAULT_JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
+  DYNATRACE_ECR_REPOSITORY: ${{ secrets.DYNATRACE_ECR_REPOSITORY }}
+  DYNATRACE_ECS_SERVICE: ${{ secrets.DYNATRACE_ECS_SERVICE }}
+  DYNATRACE_TASK_DEFINITION_FAMILY: ${{ secrets.DYNATRACE_TASK_DEFINITION_FAMILY }}
+  DYNATRACE_DEFAULT_MAVEN_PROFILE: native-dynatrace
+  DT_TENANT_URL: ${{ vars.DYNATRACE_ENVIRONMENT_URL }}
+  DT_API_TOKEN: ${{ secrets.DYNATRACE_API_TOKEN }}
+
+jobs:
+  build-and-deploy-dynatrace:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve JAVA_TOOL_OPTIONS
+        run: |
+          set -euo pipefail
+          if [ -n "${{ github.event.inputs.java_tool_options }}" ]; then
+            echo "JAVA_TOOL_OPTIONS=${{ github.event.inputs.java_tool_options }}" >> "$GITHUB_ENV"
+          elif [ -n "${{ secrets.JAVA_TOOL_OPTIONS }}" ]; then
+            echo "JAVA_TOOL_OPTIONS=${{ secrets.JAVA_TOOL_OPTIONS }}" >> "$GITHUB_ENV"
+          elif [ -n "${{ vars.JAVA_TOOL_OPTIONS }}" ]; then
+            echo "JAVA_TOOL_OPTIONS=${{ vars.JAVA_TOOL_OPTIONS }}" >> "$GITHUB_ENV"
+          else
+            echo "JAVA_TOOL_OPTIONS=$DEFAULT_JAVA_TOOL_OPTIONS" >> "$GITHUB_ENV"
+          fi
+
+      - name: Resolve native Maven profile
+        run: |
+          set -euo pipefail
+          PROFILE="${{ github.event.inputs.native_maven_profile }}"
+          if [ -z "$PROFILE" ]; then
+            PROFILE="$DYNATRACE_DEFAULT_MAVEN_PROFILE"
+          fi
+          echo "NATIVE_MAVEN_PROFILE=$PROFILE" >> "$GITHUB_ENV"
+
+      - name: Resolve Dynatrace build credentials
+        run: |
+          set -euo pipefail
+          TENANT_URL="${{ vars.DYNATRACE_ENVIRONMENT_URL }}"
+          if [ -z "$TENANT_URL" ]; then
+            TENANT_URL="${{ secrets.DYNATRACE_ENVIRONMENT_URL }}"
+          fi
+          if [ -z "$TENANT_URL" ]; then
+            echo "::error::DT_TENANT_URL is not defined. Set repository variable DYNATRACE_ENVIRONMENT_URL or secret DYNATRACE_ENVIRONMENT_URL." >&2
+            exit 1
+          fi
+
+          API_TOKEN="${{ secrets.DYNATRACE_API_TOKEN }}"
+          if [ -z "$API_TOKEN" ]; then
+            echo "::error::DT_API_TOKEN is not defined. Set repository secret DYNATRACE_API_TOKEN." >&2
+            exit 1
+          fi
+
+          echo "DT_TENANT_URL=$TENANT_URL" >> "$GITHUB_ENV"
+          echo "DT_API_TOKEN=$API_TOKEN" >> "$GITHUB_ENV"
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+
+      - name: Build with Maven
+        run: mvn -B -f service/pom.xml clean package
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Dynatrace image
+        id: build-image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          IMAGE_URI="${{ env.DYNATRACE_ECR_REPOSITORY }}:$IMAGE_TAG"
+          docker build \
+            --build-arg NATIVE_MAVEN_PROFILE="$NATIVE_MAVEN_PROFILE" \
+            --build-arg DT_TENANT_URL="$DT_TENANT_URL" \
+            --build-arg DT_API_TOKEN="$DT_API_TOKEN" \
+            -f service/Dockerfile.dynatrace \
+            -t "$IMAGE_URI" \
+            service
+          docker push "$IMAGE_URI"
+          echo "image_uri=$IMAGE_URI" >> "$GITHUB_OUTPUT"
+
+      - name: Render Dynatrace task definition
+        id: task-def
+        env:
+          IMAGE_URI: ${{ steps.build-image.outputs.image_uri }}
+          TASK_DEFINITION_FAMILY: ${{ env.DYNATRACE_TASK_DEFINITION_FAMILY }}
+        run: |
+          set -euo pipefail
+
+          aws ecs describe-task-definition \
+            --task-definition "$TASK_DEFINITION_FAMILY" \
+            --query 'taskDefinition' \
+            > dynatrace-task-def.json
+
+          jq --arg image "$IMAGE_URI" \
+             --arg app_name "app-dynatrace" '
+            def clean: del(
+              .taskDefinitionArn,
+              .revision,
+              .status,
+              .registeredAt,
+              .registeredBy,
+              .deregisteredAt,
+              .compatibilities,
+              .requiresAttributes,
+              .inferenceAccelerators,
+              .tags
+            );
+            clean
+            | (.containerDefinitions) = (.containerDefinitions | map(
+                if .name == $app_name then
+                  .image = $image
+                else . end
+              ))
+          ' dynatrace-task-def.json > new-dynatrace-task-def.json
+
+          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://new-dynatrace-task-def.json \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+
+          echo "task_definition_arn=$NEW_TASK_DEF_ARN" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy Dynatrace service
+        env:
+          TASK_DEFINITION_ARN: ${{ steps.task-def.outputs.task_definition_arn }}
+          ECS_SERVICE: ${{ env.DYNATRACE_ECS_SERVICE }}
+        run: |
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service "$ECS_SERVICE" \
+            --task-definition "$TASK_DEFINITION_ARN"
+
+          aws ecs wait services-stable \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE"

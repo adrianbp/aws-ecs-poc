@@ -33,6 +33,21 @@ output "native_task_definition_family" {
   value       = var.native_service_enabled ? aws_ecs_task_definition.native[0].family : null
 }
 
+output "dynatrace_ecr_repository_url" {
+  description = "URI completo do repositório ECR para a imagem Dynatrace"
+  value       = var.dynatrace_service_enabled ? aws_ecr_repository.dynatrace[0].repository_url : null
+}
+
+output "dynatrace_ecs_service_name" {
+  description = "Nome do serviço ECS Dynatrace"
+  value       = var.dynatrace_service_enabled ? aws_ecs_service.dynatrace[0].name : null
+}
+
+output "dynatrace_task_definition_family" {
+  description = "Família da task definition usada pelo serviço Dynatrace"
+  value       = var.dynatrace_service_enabled ? aws_ecs_task_definition.dynatrace[0].family : null
+}
+
 output "load_balancer_dns" {
   description = "Endpoint HTTP público do ALB"
   value       = aws_lb.this.dns_name

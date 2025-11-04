@@ -77,6 +77,72 @@ variable "native_task_memory" {
   default     = 1024
 }
 
+variable "dynatrace_service_enabled" {
+  description = "Habilita o provisionamento da versão monitorada com Dynatrace"
+  type        = bool
+  default     = false
+}
+
+variable "dynatrace_desired_count" {
+  description = "Quantidade de tarefas ECS desejadas para o serviço Dynatrace"
+  type        = number
+  default     = 0
+}
+
+variable "dynatrace_container_image" {
+  description = "Imagem do container para o serviço Dynatrace"
+  type        = string
+  default     = null
+}
+
+variable "dynatrace_task_cpu" {
+  description = "CPU (em unidades vCPU) da task Dynatrace"
+  type        = number
+  default     = 512
+}
+
+variable "dynatrace_task_memory" {
+  description = "Memória (MB) da task Dynatrace"
+  type        = number
+  default     = 1024
+}
+
+variable "dynatrace_container_port" {
+  description = "Porta exposta pelo container Dynatrace"
+  type        = number
+  default     = 8080
+}
+
+variable "dynatrace_health_check_path" {
+  description = "Path de health-check do serviço Dynatrace"
+  type        = string
+  default     = "/actuator/health"
+}
+
+variable "dynatrace_oneagent_image" {
+  description = "Imagem do Dynatrace OneAgent sidecar"
+  type        = string
+  default     = "public.ecr.aws/dynatrace/oneagent:latest"
+}
+
+variable "dynatrace_api_url" {
+  description = "URL do cluster Dynatrace"
+  type        = string
+  default     = null
+}
+
+variable "dynatrace_tenant_id" {
+  description = "Tenant ID do Dynatrace"
+  type        = string
+  default     = null
+}
+
+variable "dynatrace_api_token_secret_arn" {
+  description = "ARN do secret contendo o token da API Dynatrace"
+  type        = string
+  default     = null
+}
+
 variable "container_image" {
   description = "Imagem do container (ex: <account>.dkr.ecr.<region>.amazonaws.com/repo:tag)"
   type        = string
