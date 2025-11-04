@@ -10,7 +10,7 @@ ARG MAVEN_BASE_URL=https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION
 ENV MAVEN_HOME=/opt/apache-maven-${MAVEN_VERSION}
 ENV PATH=$MAVEN_HOME/bin:$PATH
 
-RUN microdnf install -y --setopt=install_weak_deps=0 curl tar gzip findutils musl-gcc musl-devel \
+RUN microdnf install -y --setopt=install_weak_deps=0 curl tar gzip findutils \
     && curl -fsSL "${MAVEN_BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz" -o /tmp/maven.tar.gz \
     && tar -xzf /tmp/maven.tar.gz -C /opt \
     && ln -s ${MAVEN_HOME}/bin/mvn /usr/local/bin/mvn \
