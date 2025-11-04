@@ -9,6 +9,10 @@ on:
         description: "Override JAVA_TOOL_OPTIONS (leave blank to use secret/variable/default)"
         required: false
         default: ""
+      native_maven_profile:
+        description: "Override Maven profile for native image (e.g. native, native-musl)"
+        required: false
+        default: ""
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -23,6 +27,7 @@ env:
   NATIVE_ECR_REPOSITORY: ${{ secrets.NATIVE_ECR_REPOSITORY }}
   NATIVE_ECS_SERVICE: ${{ secrets.NATIVE_ECS_SERVICE }}
   NATIVE_TASK_DEFINITION_FAMILY: ${{ secrets.NATIVE_TASK_DEFINITION_FAMILY }}
+  NATIVE_MAVEN_PROFILE: native
 
 jobs:
   build-and-deploy:
@@ -183,6 +188,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Resolve native Maven profile
+        run: |
+          set -euo pipefail
+          PROFILE="${{ github.event.inputs.native_maven_profile }}"
+          if [ -z "$PROFILE" ]; then
+            PROFILE="${{ env.NATIVE_MAVEN_PROFILE }}"
+          fi
+          echo "NATIVE_MAVEN_PROFILE=$PROFILE" >> "$GITHUB_ENV"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -199,7 +213,11 @@ jobs:
           ECR_REPOSITORY: ${{ env.NATIVE_ECR_REPOSITORY }}
         run: |
           IMAGE_URI="$ECR_REPOSITORY:$IMAGE_TAG"
-          docker build -f service/Dockerfile.native -t "$IMAGE_URI" service
+          docker build \
+            --build-arg NATIVE_MAVEN_PROFILE="$NATIVE_MAVEN_PROFILE" \
+            -f service/Dockerfile.native \
+            -t "$IMAGE_URI" \
+            service
           docker push "$IMAGE_URI"
           echo "image_uri=$IMAGE_URI" >> "$GITHUB_OUTPUT"
 
