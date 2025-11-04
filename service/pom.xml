@@ -111,5 +111,64 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>native-musl</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-dd-java-agent</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.datadoghq</groupId>
+                                            <artifactId>dd-java-agent</artifactId>
+                                            <version>${dd.trace.version}</version>
+                                            <destFileName>dd-java-agent.jar</destFileName>
+                                            <outputDirectory>${project.build.directory}/datadog</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>${graalvm.native.maven.plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <imageName>${project.artifactId}</imageName>
+                            <mainClass>com.example.ecs.EcsDemoApplication</mainClass>
+                            <buildArgs>
+                                <buildArg>-J-javaagent:${project.build.directory}/datadog/dd-java-agent.jar</buildArg>
+                                <buildArg>-O3</buildArg>
+                                <buildArg>--enable-monitoring=jfr</buildArg>
+                                <buildArg>--static</buildArg>
+                                <buildArg>--libc=musl</buildArg>
+                            </buildArgs>
+                            <jvmArgs>
+                                <arg>-Ddd.profiling.enabled=true</arg>
+                                <arg>-Dnet.bytebuddy.safe=false</arg>
+                            </jvmArgs>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>compile-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>

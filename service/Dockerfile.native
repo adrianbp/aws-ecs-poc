@@ -2,13 +2,15 @@
 FROM ghcr.io/graalvm/native-image-community:25 AS build
 WORKDIR /workspace
 
+ARG NATIVE_MAVEN_PROFILE="native"
+
 # Instala dependências mínimas e Maven via distribuição binária
 ARG MAVEN_VERSION=3.9.9
 ARG MAVEN_BASE_URL=https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries
 ENV MAVEN_HOME=/opt/apache-maven-${MAVEN_VERSION}
 ENV PATH=$MAVEN_HOME/bin:$PATH
 
-RUN microdnf install -y --setopt=install_weak_deps=0 curl tar gzip findutils \
+RUN microdnf install -y --setopt=install_weak_deps=0 curl tar gzip findutils musl-gcc musl-devel \
     && curl -fsSL "${MAVEN_BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz" -o /tmp/maven.tar.gz \
     && tar -xzf /tmp/maven.tar.gz -C /opt \
     && ln -s ${MAVEN_HOME}/bin/mvn /usr/local/bin/mvn \
@@ -20,7 +22,7 @@ COPY pom.xml .
 COPY src ./src
 
 # Gera o binário nativo com o profile dedicado
-RUN mvn -Pnative -Dmaven.test.skip=true -B clean package
+RUN mvn -P"${NATIVE_MAVEN_PROFILE}" -Dmaven.test.skip=true -B clean package
 
 # Runtime stage: imagem slim com libs necessárias para executar o binário
 FROM debian:12-slim AS runtime
