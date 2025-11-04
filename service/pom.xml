@@ -110,6 +110,17 @@
                         <extensions>true</extensions>
 
                     </plugin>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>${graalvm.native.maven.plugin.version}</version>
+                        <configuration>
+                            <buildArgs combine.children="append">
+                                <buildArg>--static</buildArg>
+                                <buildArg>--libc=musl</buildArg>
+                            </buildArgs>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
