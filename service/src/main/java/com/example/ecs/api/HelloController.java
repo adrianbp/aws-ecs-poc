@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping({"/api","/dynatrace/api"})
+@RequestMapping({"/api","/dynatrace/api","/native/api"})
 public class HelloController {
 
     @Value("${spring.application.name}")
