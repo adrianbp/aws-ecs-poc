@@ -15,6 +15,11 @@ public class HelloController {
 
     @Value("${spring.application.name}")
     private String applicationName;
+    private final GreetingRepository greetingRepository;
+
+    public HelloController(GreetingRepository greetingRepository) {
+        this.greetingRepository = greetingRepository;
+    }
 
     @GetMapping("/info")
     public ResponseEntity<Map<String, Object>> info() {
@@ -22,7 +27,8 @@ public class HelloController {
             Map.of(
                 "app", applicationName,
                 "timestamp", Instant.now().toString(),
-                "message", "ECS JVM tuning POC"
+                "message", "ECS JVM tuning POC",
+                "greetings", greetingRepository.findAll()
             )
         );
     }
