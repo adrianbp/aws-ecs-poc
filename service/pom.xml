@@ -117,8 +117,8 @@
                         <version>${graalvm.native.maven.plugin.version}</version>
                         <configuration>
                             <buildArgs combine.children="append">
-                                <buildArg>--static</buildArg>
-                                <buildArg>--libc=musl</buildArg>
+                                <buildArg>-O3</buildArg>
+                                <buildArg>-march=native</buildArg>
                             </buildArgs>
                         </configuration>
                     </plugin>
