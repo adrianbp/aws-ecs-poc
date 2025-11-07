@@ -118,7 +118,6 @@
                         <configuration>
                             <buildArgs combine.children="append">
                                 <buildArg>-O3</buildArg>
-                                <buildArg>-march=native</buildArg>
                             </buildArgs>
                         </configuration>
                     </plugin>
