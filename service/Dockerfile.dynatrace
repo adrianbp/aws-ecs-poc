@@ -1,5 +1,5 @@
 # Build stage: gera binário nativo utilizando o profile Dynatrace
-FROM container-registry.oracle.com/graalvm/native-image:25-muslibAS build
+FROM container-registry.oracle.com/graalvm/native-image:25-muslib AS build
 WORKDIR /workspace
 
 ARG MAVEN_VERSION=3.9.9
