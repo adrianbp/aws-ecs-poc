@@ -1,5 +1,5 @@
 # Build stage: compila a imagem nativa usando GraalVM Community 25
-FROM container-registry.oracle.com/graalvm/native-image:25 AS build
+FROM container-registry.oracle.com/graalvm/native-image:25-muslib AS build
 WORKDIR /workspace
 
 ARG NATIVE_MAVEN_PROFILE="native,native-datadog"

@@ -695,11 +695,55 @@ resource "aws_iam_role" "ecs_task" {
   assume_role_policy = data.aws_iam_policy_document.ecs_task_execution.json
 }
 
+resource "aws_iam_role_policy" "ecs_task_execute_command" {
+  name = "${local.name_prefix}-task-exec-policy"
+  role = aws_iam_role.ecs_task.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role" "datadog_task" {
   count = var.enable_datadog_agent ? 1 : 0
 
   name               = "${local.name_prefix}-datadog-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_task_execution.json
+}
+
+resource "aws_iam_role_policy" "datadog_task_execute_command" {
+  count = var.enable_datadog_agent ? 1 : 0
+
+  name = "${local.name_prefix}-datadog-task-exec-policy"
+  role = aws_iam_role.datadog_task[0].id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 resource "aws_iam_role_policy" "datadog_task_default" {
@@ -1020,6 +1064,7 @@ resource "aws_ecs_service" "native" {
   desired_count   = var.native_desired_count
   launch_type     = "FARGATE"
   propagate_tags  = "SERVICE"
+  enable_execute_command = true
 
   network_configuration {
     subnets          = [for subnet in aws_subnet.public : subnet.id]

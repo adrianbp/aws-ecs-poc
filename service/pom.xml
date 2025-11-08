@@ -78,6 +78,10 @@
                             <buildArgs>
                                 <buildArg>-O3</buildArg>
                                 <buildArg>--enable-monitoring=jfr</buildArg>
+                                <buildArg>--gc=g1</buildArg>
+                                <buildArg>-XX:MaxRAMPercentage=75</buildArg>
+                                <buildArg>--static</buildArg>
+                                <buildArg>--libc=musl</buildArg>
                             </buildArgs>
                             <jvmArgs>
                                 <arg>-Dnet.bytebuddy.safe=false</arg>
@@ -159,6 +163,7 @@
                         <configuration>
                             <buildArgs combine.children="append">
                                 <buildArg>-J-javaagent:${project.build.directory}/datadog/dd-java-agent.jar</buildArg>
+                         
                             </buildArgs>
                             <jvmArgs combine.children="append">
                                 <arg>-Ddd.profiling.enabled=true</arg>
