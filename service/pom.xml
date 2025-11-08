@@ -79,7 +79,6 @@
                                 <buildArg>-O3</buildArg>
                                 <buildArg>--enable-monitoring=jfr</buildArg>
                                 <buildArg>--gc=g1</buildArg>
-                                <buildArg>-XX:MaxRAMPercentage=75</buildArg>
                                 <buildArg>--static</buildArg>
                                 <buildArg>--libc=musl</buildArg>
                             </buildArgs>
