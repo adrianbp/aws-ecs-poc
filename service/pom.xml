@@ -78,7 +78,7 @@
                             <buildArgs>
                                 <buildArg>-O3</buildArg>
                                 <buildArg>--enable-monitoring=jfr</buildArg>
-                                <buildArg>--gc=g1</buildArg>
+                                <buildArg>--gc=G1</buildArg>
                                 <buildArg>--static</buildArg>
                                 <buildArg>--libc=musl</buildArg>
                             </buildArgs>
