@@ -98,7 +98,8 @@
                             <buildArgs>
                                 <buildArg>-O3</buildArg>
                                 <buildArg>--enable-monitoring=jfr</buildArg>
-                                <buildArg>--static-nolibc</buildArg>
+                                <buildArg>--static</buildArg>
+                                <buildArg>--libc=musl</buildArg>
                             </buildArgs>
                         </configuration>
                         <executions>

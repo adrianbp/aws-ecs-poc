@@ -1,5 +1,5 @@
 # Build stage: compiles the native executable with GraalVM
-FROM ghcr.io/graalvm/native-image-community:25 AS build
+FROM container-registry.oracle.com/graalvm/native-image:25-muslib  AS build
 
 ARG MAVEN_VERSION=3.9.9
 ENV MAVEN_HOME=/opt/apache-maven-${MAVEN_VERSION}
