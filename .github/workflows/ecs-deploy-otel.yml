@@ -45,6 +45,24 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Validate OpenTelemetry ECR repository
+        run: |
+          set -euo pipefail
+
+          REPO=${OTEL_ECR_REPOSITORY:-}
+          if [ -z "$REPO" ] || [ "$REPO" = "null" ]; then
+            echo "::error::OTEL_ECR_REPOSITORY is not configured. Set the OTEL_ECR_REPOSITORY secret." >&2
+            exit 1
+          fi
+
+          REPO_NAME=${REPO##*/}
+          if ! aws ecr describe-repositories --repository-names "$REPO_NAME" >/dev/null 2>&1; then
+            echo "::error::ECR repository '$REPO_NAME' does not exist in ${AWS_REGION}." >&2
+            exit 1
+          fi
+
+          echo "OTEL_ECR_REPOSITORY=$REPO" >> "$GITHUB_ENV"
+
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
