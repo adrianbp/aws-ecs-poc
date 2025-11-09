@@ -185,6 +185,78 @@ variable "jvm_tool_options" {
   default     = "-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
 }
 
+variable "otel_service_enabled" {
+  description = "Habilita o provisionamento da versão OpenTelemetry nativa"
+  type        = bool
+  default     = false
+}
+
+variable "otel_desired_count" {
+  description = "Quantidade de tarefas ECS desejadas para o serviço OpenTelemetry"
+  type        = number
+  default     = 0
+}
+
+variable "otel_container_image" {
+  description = "Imagem do container para o serviço OpenTelemetry"
+  type        = string
+  default     = null
+}
+
+variable "otel_task_cpu" {
+  description = "CPU (em unidades vCPU) da task OpenTelemetry"
+  type        = number
+  default     = 512
+}
+
+variable "otel_task_memory" {
+  description = "Memória (MB) da task OpenTelemetry"
+  type        = number
+  default     = 1024
+}
+
+variable "otel_container_port" {
+  description = "Porta exposta pelo container OpenTelemetry"
+  type        = number
+  default     = 8080
+}
+
+variable "otel_health_check_path" {
+  description = "Path de health-check do serviço OpenTelemetry"
+  type        = string
+  default     = "/actuator/health"
+}
+
+variable "otel_exporter_otlp_endpoint" {
+  description = "Endpoint OTLP usado pelo serviço OpenTelemetry"
+  type        = string
+  default     = null
+}
+
+variable "otel_exporter_otlp_headers_secret_arn" {
+  description = "ARN do secret contendo os headers OTLP (ex: Authorization)"
+  type        = string
+  default     = null
+}
+
+variable "otel_exporter_otlp_protocol" {
+  description = "Protocolo OTLP usado pelo serviço OpenTelemetry"
+  type        = string
+  default     = "http/protobuf"
+}
+
+variable "otel_resource_attributes" {
+  description = "Valor de OTEL_RESOURCE_ATTRIBUTES para o serviço OpenTelemetry"
+  type        = string
+  default     = null
+}
+
+variable "otel_exporter_otlp_metrics_temporality_preference" {
+  description = "Valor de OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE"
+  type        = string
+  default     = "delta"
+}
+
 variable "native_dd_service_name" {
   description = "Valor do DD_SERVICE para o serviço nativo"
   type        = string

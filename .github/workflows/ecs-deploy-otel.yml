@@ -1,0 +1,115 @@
+name: Deploy OpenTelemetry Native
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      run_tests:
+        description: "Run Maven tests before building"
+        required: false
+        default: "true"
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
+  OTEL_ECR_REPOSITORY: ${{ secrets.OTEL_ECR_REPOSITORY }}
+  OTEL_ECS_SERVICE: ${{ secrets.OTEL_ECS_SERVICE }}
+  OTEL_TASK_DEFINITION_FAMILY: ${{ secrets.OTEL_TASK_DEFINITION_FAMILY }}
+  OTEL_CONTAINER_NAME: "app-otel"
+
+jobs:
+  build-and-deploy-otel:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+
+      - name: Run tests
+        if: ${{ github.event.inputs.run_tests != 'false' }}
+        run: mvn -B -f otel-native-poc/pom.xml test
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push OpenTelemetry native image
+        id: build-image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          IMAGE_URI="${{ env.OTEL_ECR_REPOSITORY }}:$IMAGE_TAG"
+          docker build -t "$IMAGE_URI" otel-native-poc
+          docker push "$IMAGE_URI"
+          echo "image_uri=$IMAGE_URI" >> "$GITHUB_OUTPUT"
+
+      - name: Render OpenTelemetry task definition
+        id: task-def
+        env:
+          IMAGE_URI: ${{ steps.build-image.outputs.image_uri }}
+        run: |
+          set -euo pipefail
+
+          aws ecs describe-task-definition \
+            --task-definition "${{ env.OTEL_TASK_DEFINITION_FAMILY }}" \
+            --query 'taskDefinition' \
+            > otel-task-def.json
+
+          jq --arg image "$IMAGE_URI" \
+             --arg app_name "${{ env.OTEL_CONTAINER_NAME }}" '
+            def clean: del(
+              .taskDefinitionArn,
+              .revision,
+              .status,
+              .registeredAt,
+              .registeredBy,
+              .deregisteredAt,
+              .compatibilities,
+              .requiresAttributes,
+              .inferenceAccelerators,
+              .tags
+            );
+            clean
+            | (.containerDefinitions) = (.containerDefinitions | map(
+                if .name == $app_name then
+                  .image = $image
+                else . end
+              ))
+          ' otel-task-def.json > new-otel-task-def.json
+
+          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://new-otel-task-def.json \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+
+          echo "task_definition_arn=$NEW_TASK_DEF_ARN" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy OpenTelemetry service
+        env:
+          TASK_DEFINITION_ARN: ${{ steps.task-def.outputs.task_definition_arn }}
+        run: |
+          set -euo pipefail
+          aws ecs update-service \
+            --cluster "${{ env.ECS_CLUSTER }}" \
+            --service "${{ env.OTEL_ECS_SERVICE }}" \
+            --task-definition "$TASK_DEFINITION_ARN"
+
+          aws ecs wait services-stable \
+            --cluster "${{ env.ECS_CLUSTER }}" \
+            --services "${{ env.OTEL_ECS_SERVICE }}"

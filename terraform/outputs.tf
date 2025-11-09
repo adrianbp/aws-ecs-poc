@@ -48,6 +48,21 @@ output "dynatrace_task_definition_family" {
   value       = var.dynatrace_service_enabled ? aws_ecs_task_definition.dynatrace[0].family : null
 }
 
+output "otel_ecr_repository_url" {
+  description = "URI completo do repositório ECR para a imagem OpenTelemetry"
+  value       = var.otel_service_enabled ? aws_ecr_repository.otel[0].repository_url : null
+}
+
+output "otel_ecs_service_name" {
+  description = "Nome do serviço ECS OpenTelemetry"
+  value       = var.otel_service_enabled ? aws_ecs_service.otel[0].name : null
+}
+
+output "otel_task_definition_family" {
+  description = "Família da task definition usada pelo serviço OpenTelemetry"
+  value       = var.otel_service_enabled ? aws_ecs_task_definition.otel[0].family : null
+}
+
 output "load_balancer_dns" {
   description = "Endpoint HTTP público do ALB"
   value       = aws_lb.this.dns_name
