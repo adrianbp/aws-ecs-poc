@@ -437,6 +437,94 @@ locals {
   var.otel_service_enabled ? [var.otel_container_port] : []))
 
   github_secret_describe_arns = distinct(concat(local.datadog_secret_arns, local.dynatrace_secret_arns, local.otel_secret_arns))
+
+  codebuild_project_name = coalesce(var.codebuild_project_name, "${local.name_prefix}-codebuild-sb4-otel")
+}
+
+resource "aws_cloudwatch_log_group" "codebuild" {
+  count             = var.codebuild_enabled ? 1 : 0
+  name              = "/aws/codebuild/${local.codebuild_project_name}"
+  retention_in_days = var.log_retention_days
+}
+
+data "aws_iam_policy_document" "codebuild_assume" {
+  count = var.codebuild_enabled && var.codebuild_service_role_arn == null ? 1 : 0
+
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["codebuild.amazonaws.com"]
+    }
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "codebuild" {
+  count = var.codebuild_enabled && var.codebuild_service_role_arn == null ? 1 : 0
+
+  name               = "${local.name_prefix}-codebuild-role"
+  assume_role_policy = data.aws_iam_policy_document.codebuild_assume[0].json
+}
+
+resource "aws_iam_role_policy_attachment" "codebuild_managed" {
+  count      = var.codebuild_enabled && var.codebuild_service_role_arn == null ? 1 : 0
+  role       = aws_iam_role.codebuild[0].name
+  policy_arn = "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess"
+}
+
+locals {
+  codebuild_role_arn = var.codebuild_enabled ? coalesce(var.codebuild_service_role_arn, try(aws_iam_role.codebuild[0].arn, null)) : null
+}
+
+resource "aws_codebuild_project" "springboot4_otel" {
+  count        = var.codebuild_enabled ? 1 : 0
+  name         = local.codebuild_project_name
+  description  = "Native build for Spring Boot 4 OTEL POC"
+  service_role = local.codebuild_role_arn
+  build_timeout = var.codebuild_timeout
+
+  artifacts {
+    type = "NO_ARTIFACTS"
+  }
+
+  environment {
+    compute_type                = var.codebuild_compute_type
+    image                       = var.codebuild_image
+    type                        = "LINUX_CONTAINER"
+    privileged_mode             = var.codebuild_privileged_mode
+    image_pull_credentials_type = "CODEBUILD"
+
+    dynamic "environment_variable" {
+      for_each = var.codebuild_environment_variables
+      content {
+        name  = environment_variable.key
+        value = environment_variable.value
+        type  = "PLAINTEXT"
+      }
+    }
+  }
+
+  logs_config {
+    cloudwatch_logs {
+      group_name  = aws_cloudwatch_log_group.codebuild[0].name
+      stream_name = "build"
+    }
+  }
+
+  source {
+    type            = "GITHUB"
+    location        = "https://github.com/${var.github_owner}/${var.github_repository}.git"
+    git_clone_depth = 1
+    buildspec       = var.codebuild_buildspec
+  }
+
+  source_version = var.github_branch
+
+  tags = {
+    Name        = local.codebuild_project_name
+    Environment = var.environment
+  }
 }
 
 resource "aws_vpc" "this" {

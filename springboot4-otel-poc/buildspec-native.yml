@@ -1,0 +1,36 @@
+version: 0.2
+
+env:
+  shell: bash
+  variables:
+    JAVA_HOME: /usr/lib/jvm/java-23-amazon-corretto
+    MAVEN_OPTS: -Dmaven.test.skip=true
+phases:
+  install:
+    commands:
+      - echo "[install] Configurando toolchain"
+      - sudo yum install -y java-23-amazon-corretto-devel
+      - curl -sSL https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.9/apache-maven-3.9.9-bin.tar.gz | tar -xz -C /tmp
+      - export M2_HOME=/tmp/apache-maven-3.9.9
+      - export PATH="$M2_HOME/bin:$PATH"
+      - mvn -v
+  pre_build:
+    commands:
+      - echo "[pre_build] Limpando workspace"
+      - mvn -version
+      - mvn -pl springboot4-otel-poc -am clean
+  build:
+    commands:
+      - echo "[build] Compilando nativamente"
+      - mvn -pl springboot4-otel-poc -am -Pnative -DskipTests package
+  post_build:
+    commands:
+      - echo "[post_build] Artefato nativo gerado em springboot4-otel-poc/target"
+artifacts:
+  files:
+    - springboot4-otel-poc/target/*.jar
+    - springboot4-otel-poc/target/*
+  discard-paths: no
+cache:
+  paths:
+    - /root/.m2/**/*

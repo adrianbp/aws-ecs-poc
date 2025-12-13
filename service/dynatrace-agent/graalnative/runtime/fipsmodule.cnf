@@ -1,0 +1,24 @@
+config_diagnostics = 1
+openssl_conf = openssl_init
+
+[fips_sect]
+activate = 0
+conditional-errors = 1
+security-checks = 1
+module-mac = 63:AF:18:44:32:1E:3E:59:4C:53:C3:4F:62:15:7A:EC:BC:0D:FC:5C:73:DE:53:A4:AD:08:42:30:D3:63:FB:06
+
+[openssl_init]
+providers = provider_sect
+
+[provider_sect]
+fips = fips_sect
+fips0 = fips_sect
+fips1 = fips_sect
+fips2 = fips_sect
+fips3 = fips_sect
+fips4 = fips_sect
+base = base_sect
+
+[base_sect]
+activate = 1
+

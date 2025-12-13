@@ -1,0 +1,65 @@
+name: springboot4-otel-native-codebuild
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'springboot4-otel-poc/**'
+      - '.github/workflows/codebuild-native-springboot4.yml'
+
+jobs:
+  trigger-codebuild:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_CODEBUILD_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+      - name: Start CodeBuild native build
+        id: start-build
+        env:
+          CODEBUILD_PROJECT: ${{ secrets.AWS_CODEBUILD_PROJECT_NAME }}
+          BUILDSPEC_OVERRIDE: springboot4-otel-poc/buildspec-native.yml
+        run: |
+          if [[ -z "$CODEBUILD_PROJECT" ]]; then
+            echo "::error::Configure the secret AWS_CODEBUILD_PROJECT_NAME before running this workflow." ; exit 1
+          fi
+          BUILD_OUTPUT=$(aws codebuild start-build \
+            --project-name "$CODEBUILD_PROJECT" \
+            --buildspec-override "$BUILDSPEC_OVERRIDE" \
+            --source-version "$GITHUB_SHA" \
+            --environment-variables-override name=GIT_BRANCH,value=${GITHUB_REF_NAME},type=PLAINTEXT)
+          echo "$BUILD_OUTPUT"
+          BUILD_ID=$(echo "$BUILD_OUTPUT" | jq -r '.build.id')
+          if [[ "$BUILD_ID" == "null" || -z "$BUILD_ID" ]]; then
+            echo "::error::Unable to extract CodeBuild ID from response." ; exit 1
+          fi
+          echo "build-id=$BUILD_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for build to finish
+        env:
+          BUILD_ID: ${{ steps.start-build.outputs.build-id }}
+        run: |
+          if [[ -z "$BUILD_ID" ]]; then
+            echo "Skipping wait because build ID is unavailable (likely due to earlier failure)." ; exit 0
+          fi
+          STATUS="IN_PROGRESS"
+          while [[ "$STATUS" == "IN_PROGRESS" || "$STATUS" == "QUEUED" ]]; do
+            STATUS=$(aws codebuild batch-get-builds --ids "$BUILD_ID" --query 'builds[0].buildStatus' --output text)
+            echo "Build status: $STATUS"
+            if [[ "$STATUS" == "IN_PROGRESS" || "$STATUS" == "QUEUED" ]]; then
+              sleep 20
+            fi
+          done
+          if [[ "$STATUS" != "SUCCEEDED" ]]; then
+            echo "::error::CodeBuild build ended with status $STATUS" ; exit 1
+          fi
+          echo "Build finished successfully."

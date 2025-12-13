@@ -83,3 +83,8 @@ output "datadog_secret_arn" {
   value       = var.enable_datadog_agent ? try(aws_secretsmanager_secret.datadog[0].arn, var.datadog_api_key_secret_arn) : null
   sensitive   = true
 }
+
+output "codebuild_project_name" {
+  description = "Nome do projeto CodeBuild provisionado"
+  value       = var.codebuild_enabled ? aws_codebuild_project.springboot4_otel[0].name : null
+}

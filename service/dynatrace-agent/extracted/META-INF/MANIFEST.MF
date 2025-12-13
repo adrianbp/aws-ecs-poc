@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Implementation-Title: oneagent-graalnative-feature
+Implementation-Version: 1.325.51.20251103-195814
+

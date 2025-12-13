@@ -345,3 +345,57 @@ variable "datadog_tags" {
   type        = string
   default     = null
 }
+
+variable "codebuild_enabled" {
+  description = "Habilita provisionamento do projeto CodeBuild para builds nativos"
+  type        = bool
+  default     = false
+}
+
+variable "codebuild_project_name" {
+  description = "Nome opcional do projeto CodeBuild (default deriva de project_name/environment)"
+  type        = string
+  default     = null
+}
+
+variable "codebuild_buildspec" {
+  description = "Caminho do buildspec dentro do repo"
+  type        = string
+  default     = "springboot4-otel-poc/buildspec-native.yml"
+}
+
+variable "codebuild_compute_type" {
+  description = "Compute type do CodeBuild (ex: BUILD_GENERAL1_LARGE)"
+  type        = string
+  default     = "BUILD_GENERAL1_LARGE"
+}
+
+variable "codebuild_image" {
+  description = "Imagem do ambiente de build CodeBuild"
+  type        = string
+  default     = "aws/codebuild/standard:7.0"
+}
+
+variable "codebuild_privileged_mode" {
+  description = "Ativa privileged mode (necessario para builds Docker dentro do CodeBuild)"
+  type        = bool
+  default     = false
+}
+
+variable "codebuild_timeout" {
+  description = "Timeout do build em minutos"
+  type        = number
+  default     = 60
+}
+
+variable "codebuild_environment_variables" {
+  description = "Variaveis de ambiente adicionais para o CodeBuild"
+  type        = map(string)
+  default     = {}
+}
+
+variable "codebuild_service_role_arn" {
+  description = "ARN opcional de role existente para o CodeBuild"
+  type        = string
+  default     = null
+}
