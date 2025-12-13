@@ -13,8 +13,9 @@ phases:
       - sudo apt-get update -y
       - sudo apt-get install -y build-essential zlib1g-dev
       - curl -L https://download.oracle.com/graalvm/21/latest/graalvm-jdk-21_linux-x64_bin.tar.gz -o /tmp/graalvm.tar.gz
-      - sudo tar -xzf /tmp/graalvm.tar.gz -C /opt
-      - export GRAALVM_HOME=$(find /opt -maxdepth 1 -type d -name "graalvm-*" | head -n 1)
+      - sudo mkdir -p /opt/graalvm
+      - sudo tar -xzf /tmp/graalvm.tar.gz --strip-components=1 -C /opt/graalvm
+      - export GRAALVM_HOME=/opt/graalvm
       - export JAVA_HOME=${GRAALVM_HOME}
       - export PATH="${JAVA_HOME}/bin:$PATH"
       - ${JAVA_HOME}/bin/gu install native-image
