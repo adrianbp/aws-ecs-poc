@@ -6,6 +6,11 @@ env:
     JAVA_HOME: /opt/graalvm
     GRAALVM_HOME: /opt/graalvm
     MAVEN_OPTS: -Dmaven.test.skip=true
+  exported-variables:
+    - JAVA_HOME
+    - GRAALVM_HOME
+    - M2_HOME
+    - PATH
 phases:
   install:
     commands:
@@ -15,16 +20,14 @@ phases:
       - curl -L https://download.oracle.com/graalvm/21/latest/graalvm-jdk-21_linux-x64_bin.tar.gz -o /tmp/graalvm.tar.gz
       - sudo mkdir -p /opt/graalvm
       - sudo tar -xzf /tmp/graalvm.tar.gz -C /opt/graalvm --strip-components=1
-      - echo "export GRAALVM_HOME=/opt/graalvm" >> $BASH_ENV
-      - echo "export JAVA_HOME=/opt/graalvm" >> $BASH_ENV
-      - echo "export PATH=/opt/graalvm/bin:$PATH" >> $BASH_ENV
-      - source $BASH_ENV
+      - export GRAALVM_HOME=/opt/graalvm
+      - export JAVA_HOME=/opt/graalvm
+      - export PATH=/opt/graalvm/bin:$PATH
       - ls -l ${JAVA_HOME}/bin
       - ls -l ${JAVA_HOME}/lib/svm/bin/native-image
       - curl -sSL https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.9/apache-maven-3.9.9-bin.tar.gz | tar -xz -C /tmp
-      - echo "export M2_HOME=/tmp/apache-maven-3.9.9" >> $BASH_ENV
-      - echo "export PATH=/tmp/apache-maven-3.9.9/bin:$PATH" >> $BASH_ENV
-      - source $BASH_ENV
+      - export M2_HOME=/tmp/apache-maven-3.9.9
+      - export PATH=$M2_HOME/bin:$PATH
       - mvn -v
   pre_build:
     commands:
