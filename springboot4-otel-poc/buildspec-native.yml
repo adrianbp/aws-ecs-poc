@@ -16,7 +16,7 @@ phases:
     commands:
       - echo "[install] Configurando toolchain"
       - sudo apt-get update -y
-      - sudo apt-get install -y build-essential zlib1g-dev
+      - sudo apt-get install -y build-essential zlib1g-dev musl-tools
       - curl -L https://download.oracle.com/graalvm/21/latest/graalvm-jdk-21_linux-x64_bin.tar.gz -o /tmp/graalvm.tar.gz
       - sudo mkdir -p /opt/graalvm
       - sudo tar -xzf /tmp/graalvm.tar.gz -C /opt/graalvm --strip-components=1

@@ -94,6 +94,9 @@
                                     <imageName>${project.artifactId}</imageName>
                                     <buildArgs>
                                         <buildArg>--enable-monitoring</buildArg>
+                                        <buildArg>-O3</buildArg>
+                                        <buildArg>--static</buildArg>
+                                        <buildArg>--libc=musl</buildArg>
                                     </buildArgs>
                                 </configuration>
                             </execution>
