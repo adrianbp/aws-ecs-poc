@@ -473,6 +473,30 @@ resource "aws_iam_role_policy_attachment" "codebuild_managed" {
   policy_arn = "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess"
 }
 
+resource "aws_iam_role_policy" "codebuild_logs" {
+  count = var.codebuild_enabled && var.codebuild_service_role_arn == null ? 1 : 0
+
+  name = "${local.name_prefix}-codebuild-logs"
+  role = aws_iam_role.codebuild[0].id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = [
+          "arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${local.codebuild_project_name}:*"
+        ]
+      }
+    ]
+  })
+}
+
 locals {
   codebuild_role_arn = var.codebuild_enabled ? coalesce(var.codebuild_service_role_arn, try(aws_iam_role.codebuild[0].arn, null)) : null
 }
@@ -1134,6 +1158,20 @@ data "aws_iam_policy_document" "github_actions" {
         aws_iam_role.datadog_task[0].arn
       ] : []
     )
+  }
+
+  dynamic "statement" {
+    for_each = var.codebuild_enabled ? [1] : []
+    content {
+      effect = "Allow"
+      actions = [
+        "codebuild:StartBuild",
+        "codebuild:BatchGetBuilds"
+      ]
+      resources = [
+        "arn:aws:codebuild:${var.region}:${data.aws_caller_identity.current.account_id}:project/${local.codebuild_project_name}"
+      ]
+    }
   }
 
   dynamic "statement" {

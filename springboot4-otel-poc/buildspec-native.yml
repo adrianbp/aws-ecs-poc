@@ -3,13 +3,13 @@ version: 0.2
 env:
   shell: bash
   variables:
-    JAVA_HOME: /usr/lib/jvm/java-23-amazon-corretto
+    JAVA_HOME: /usr/lib/jvm/java-21-amazon-corretto
     MAVEN_OPTS: -Dmaven.test.skip=true
 phases:
   install:
     commands:
       - echo "[install] Configurando toolchain"
-      - sudo yum install -y java-23-amazon-corretto-devel
+      - sudo yum install -y java-21-amazon-corretto-devel
       - curl -sSL https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.9/apache-maven-3.9.9-bin.tar.gz | tar -xz -C /tmp
       - export M2_HOME=/tmp/apache-maven-3.9.9
       - export PATH="$M2_HOME/bin:$PATH"
