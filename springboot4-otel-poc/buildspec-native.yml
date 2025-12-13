@@ -3,13 +3,19 @@ version: 0.2
 env:
   shell: bash
   variables:
-    JAVA_HOME: /usr/lib/jvm/java-21-amazon-corretto
+    JAVA_HOME: /opt/graalvm-jdk-21
+    GRAALVM_HOME: /opt/graalvm-jdk-21
     MAVEN_OPTS: -Dmaven.test.skip=true
 phases:
   install:
     commands:
       - echo "[install] Configurando toolchain"
-      - sudo yum install -y java-21-amazon-corretto-devel
+      - sudo dnf install -y tar gzip gcc zlib-devel libstdc++-devel
+      - curl -L https://download.oracle.com/graalvm/21/latest/graalvm-jdk-21_linux-x64_bin.tar.gz -o /tmp/graalvm.tar.gz
+      - sudo tar -xzf /tmp/graalvm.tar.gz -C /opt
+      - export JAVA_HOME=${GRAALVM_HOME}
+      - export PATH="${JAVA_HOME}/bin:$PATH"
+      - gu install native-image
       - curl -sSL https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.9/apache-maven-3.9.9-bin.tar.gz | tar -xz -C /tmp
       - export M2_HOME=/tmp/apache-maven-3.9.9
       - export PATH="$M2_HOME/bin:$PATH"
