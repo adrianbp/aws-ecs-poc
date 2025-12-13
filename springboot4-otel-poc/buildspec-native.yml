@@ -35,6 +35,7 @@ phases:
   pre_build:
     commands:
       - echo "[pre_build] Limpando workspace"
+      - ls -R
       - mvn -version
       - mvn -f springboot4-otel-poc/pom.xml clean
   build:
