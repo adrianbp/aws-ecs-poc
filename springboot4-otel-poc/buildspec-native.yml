@@ -33,11 +33,11 @@ phases:
     commands:
       - echo "[pre_build] Limpando workspace"
       - mvn -version
-      - mvn -pl springboot4-otel-poc -am clean
+      - mvn -f springboot4-otel-poc/pom.xml clean
   build:
     commands:
       - echo "[build] Compilando nativamente"
-      - mvn -pl springboot4-otel-poc -am -Pnative -DskipTests package
+      - mvn -f springboot4-otel-poc/pom.xml -Pnative -DskipTests package
   post_build:
     commands:
       - echo "[post_build] Artefato nativo gerado em springboot4-otel-poc/target"
