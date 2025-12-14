@@ -1,0 +1,87 @@
+version: 0.2
+
+env:
+  shell: bash
+  variables:
+    JAVA_HOME: /opt/graalvm
+    GRAALVM_HOME: /opt/graalvm
+    MAVEN_OPTS: -Dmaven.test.skip=true
+  exported-variables:
+    - JAVA_HOME
+    - GRAALVM_HOME
+    - M2_HOME
+    - PATH
+
+phases:
+  install:
+    commands:
+      - echo "[install] Configurando ambiente"
+      - sudo apt-get update -y
+      - sudo apt-get install -y build-essential zlib1g-dev gnupg2
+      
+      # Instalar GraalVM
+      - curl -L https://download.oracle.com/graalvm/21/latest/graalvm-jdk-21_linux-x64_bin.tar.gz -o /tmp/graalvm.tar.gz
+      - sudo mkdir -p /opt/graalvm
+      - sudo tar -xzf /tmp/graalvm.tar.gz -C /opt/graalvm --strip-components=1
+      - export GRAALVM_HOME=/opt/graalvm
+      - export JAVA_HOME=/opt/graalvm
+      - export PATH=/opt/graalvm/bin:$PATH
+      
+      # Instalar Maven
+      - curl -sSL https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.9/apache-maven-3.9.9-bin.tar.gz | tar -xz -C /tmp
+      - export M2_HOME=/tmp/apache-maven-3.9.9
+      - export PATH=$M2_HOME/bin:$PATH
+      
+      # Instalar K6 (para gerar carga)
+      - sudo gpg -k
+      - sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+      - echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+      - sudo apt-get update
+      - sudo apt-get install -y k6
+
+  pre_build:
+    commands:
+      - echo "[pre_build] Limpando workspace"
+      - cd $CODEBUILD_SRC_DIR
+      - mvn -f springboot4-otel-poc/pom.xml clean
+
+  build:
+    commands:
+      # ETAPA 1: Build Instrumentado
+      - echo "[pgo-step-1] Compilando imagem instrumentada..."
+      - mvn -f springboot4-otel-poc/pom.xml -Pnative-pgo -DskipTests package
+      - mv springboot4-otel-poc/target/springboot4-otel-poc springboot4-otel-poc/target/app-instrumented
+      
+      # ETAPA 2: Execução e Coleta de Perfil
+      - echo "[pgo-step-2] Executando aplicação para profiling..."
+      - ./springboot4-otel-poc/target/app-instrumented & APP_PID=$!
+      - echo "App PID: $APP_PID"
+      
+      - echo "Aguardando inicialização..."
+      - sleep 15
+      
+      - echo "Gerando carga com K6..."
+      - k6 run k6/pgo-load.js
+      
+      - echo "Parando aplicação para gravar default.iprof..."
+      - kill -TERM $APP_PID
+      - wait $APP_PID || true
+      
+      - echo "Verificando arquivo de perfil..."
+      - ls -l default.iprof
+      
+      # ETAPA 3: Build Otimizado
+      - echo "[pgo-step-3] Compilando imagem OTIMIZADA com PGO..."
+      # Movemos o iprof para o diretório do módulo para o maven encontrar, ou passamos o caminho absoluto
+      - mv default.iprof springboot4-otel-poc/default.iprof
+      - mvn -f springboot4-otel-poc/pom.xml -Pnative-pgo -Dnative.pgo.flag="--pgo=default.iprof" -DskipTests package
+
+  post_build:
+    commands:
+      - echo "[post_build] Build PGO concluído."
+      - ls -lh springboot4-otel-poc/target/springboot4-otel-poc
+
+artifacts:
+  files:
+    - springboot4-otel-poc/target/springboot4-otel-poc
+  discard-paths: yes
