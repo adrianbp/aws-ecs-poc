@@ -58,7 +58,9 @@ phases:
       - 'echo "App PID: $(cat app.pid)"'
       
       - echo "Aguardando inicialização..."
-      - sleep 15
+      - sleep 30
+      - echo "Logs da aplicação:"
+      - cat app.log
       
       - echo "Gerando carga com K6..."
       - k6 run k6/pgo-load.js
