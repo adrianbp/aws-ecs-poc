@@ -182,7 +182,6 @@
                                     <mainClass>com.example.springboot4otel.Springboot4OtelPocApplication</mainClass>
                                     <imageName>${project.artifactId}</imageName>
                                     <buildArgs>
-                                        <buildArg>--enable-monitoring</buildArg>
                                         <buildArg>${native.pgo.flag}</buildArg>
                                         <buildArg>--gc=G1</buildArg>
                                         <buildArg>-R:MaxRAMPercentage=80.0</buildArg>
