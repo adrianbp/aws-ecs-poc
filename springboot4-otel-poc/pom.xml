@@ -91,6 +91,7 @@
                                     <goal>compile-no-fork</goal>
                                 </goals>
                                 <configuration>
+                                    <mainClass>com.example.springboot4otel.Springboot4OtelPocApplication</mainClass>
                                     <imageName>${project.artifactId}</imageName>
                                     <buildArgs>
                                         <buildArg>--enable-monitoring</buildArg>
@@ -122,6 +123,7 @@
                                     <goal>compile-no-fork</goal>
                                 </goals>
                                 <configuration>
+                                    <mainClass>com.example.springboot4otel.Springboot4OtelPocApplication</mainClass>
                                     <imageName>${project.artifactId}</imageName>
                                     <buildArgs>
                                         <buildArg>--enable-monitoring</buildArg>
