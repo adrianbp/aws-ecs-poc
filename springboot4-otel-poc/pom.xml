@@ -155,5 +155,46 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>native-pgo</id>
+            <properties>
+                <native.pgo.flag>--pgo-instrument</native.pgo.flag>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>native-build</id>
+                                <goals>
+                                    <goal>compile-no-fork</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.example.springboot4otel.Springboot4OtelPocApplication</mainClass>
+                                    <imageName>${project.artifactId}</imageName>
+                                    <buildArgs>
+                                        <buildArg>--enable-monitoring</buildArg>
+                                        <buildArg>${native.pgo.flag}</buildArg>
+                                        <buildArg>-O3</buildArg>
+                                        <buildArg>-march=native</buildArg>
+                                        <buildArg>--gc=G1</buildArg>
+                                        <buildArg>-R:MaxRAMPercentage=80.0</buildArg>
+                                    </buildArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
