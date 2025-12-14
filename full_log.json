@@ -1,0 +1,3111 @@
+{
+    "events": [
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:10.612115 Running on CodeBuild On-demand\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:10.612125 Waiting for agent ping\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:10.713021 Waiting for DOWNLOAD_SOURCE\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.676925 Phase is DOWNLOAD_SOURCE\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.679947 CODEBUILD_SRC_DIR=/codebuild/output/src1347168966/src/github.com/adrianbp/aws-ecs-poc\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.680371 YAML location is /codebuild/output/src1347168966/src/github.com/adrianbp/aws-ecs-poc/springboot4-otel-poc/buildspec-native.yml\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.681039 Selecting shell bash as specified in buildspec.\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.682141 Setting HTTP client timeout to higher timeout for Github and GitHub Enterprise sources\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.682207 Processing environment variables\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.851493 No runtime version selected in buildspec.\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.869838 Moving to directory /codebuild/output/src1347168966/src/github.com/adrianbp/aws-ecs-poc\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.871350 Expanded cache path /root/.m2/**/*\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.919881 Registering with agent\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.954743 Phases found in YAML: 4\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.954755  INSTALL: 18 commands\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.954758  PRE_BUILD: 4 commands\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.954761  BUILD: 2 commands\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.954764  POST_BUILD: 1 commands\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.954967 Phase complete: DOWNLOAD_SOURCE State: SUCCEEDED\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:14.954984 Phase context status code:  Message: \n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:15.062276 Entering phase INSTALL\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:15.098423 Running command echo \"[install] Configurando toolchain\"\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[install] Configurando toolchain\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667778723,
+            "message": "[Container] 2025/12/13 23:16:15.177511 Running command sudo apt-get update -y\n",
+            "ingestionTime": 1765667778745
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Hit:1 https://apt.corretto.aws stable InRelease\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:2 https://dl.google.com/linux/chrome/deb stable InRelease [1,825 B]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:3 https://cli.github.com/packages stable InRelease [3,917 B]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Hit:4 http://archive.ubuntu.com/ubuntu jammy InRelease\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:5 http://archive.ubuntu.com/ubuntu jammy-updates InRelease [128 kB]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:6 http://security.ubuntu.com/ubuntu jammy-security InRelease [129 kB]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:7 https://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu jammy InRelease [24.6 kB]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:8 http://archive.ubuntu.com/ubuntu jammy-backports InRelease [127 kB]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:9 https://dl.google.com/linux/chrome/deb stable/main amd64 Packages [1,212 B]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:10 https://cli.github.com/packages stable/main amd64 Packages [345 B]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:11 http://archive.ubuntu.com/ubuntu jammy-updates/main i386 Packages [1,158 kB]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:12 https://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu jammy/main amd64 Packages [45.0 kB]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:13 http://security.ubuntu.com/ubuntu jammy-security/restricted amd64 Packages [6,185 kB]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:14 https://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu jammy/main i386 Packages [3,984 B]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:15 http://archive.ubuntu.com/ubuntu jammy-updates/universe amd64 Packages [1,598 kB]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667780762,
+            "message": "Get:16 http://archive.ubuntu.com/ubuntu jammy-updates/restricted amd64 Packages [6,410 kB]\n",
+            "ingestionTime": 1765667780765
+        },
+        {
+            "timestamp": 1765667782780,
+            "message": "Get:17 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 Packages [3,961 kB]\n",
+            "ingestionTime": 1765667782784
+        },
+        {
+            "timestamp": 1765667782780,
+            "message": "Get:18 http://archive.ubuntu.com/ubuntu jammy-updates/universe i386 Packages [986 kB]\n",
+            "ingestionTime": 1765667782784
+        },
+        {
+            "timestamp": 1765667782780,
+            "message": "Get:19 http://security.ubuntu.com/ubuntu jammy-security/main amd64 Packages [3,623 kB]\n",
+            "ingestionTime": 1765667782784
+        },
+        {
+            "timestamp": 1765667782780,
+            "message": "Get:20 http://security.ubuntu.com/ubuntu jammy-security/universe amd64 Packages [1,287 kB]\n",
+            "ingestionTime": 1765667782784
+        },
+        {
+            "timestamp": 1765667782780,
+            "message": "Get:21 http://security.ubuntu.com/ubuntu jammy-security/main i386 Packages [926 kB]\n",
+            "ingestionTime": 1765667782784
+        },
+        {
+            "timestamp": 1765667782780,
+            "message": "Get:22 http://security.ubuntu.com/ubuntu jammy-security/universe i386 Packages [845 kB]\n",
+            "ingestionTime": 1765667782784
+        },
+        {
+            "timestamp": 1765667782780,
+            "message": "Fetched 27.4 MB in 3s (9,804 kB/s)\n",
+            "ingestionTime": 1765667782784
+        },
+        {
+            "timestamp": 1765667788803,
+            "message": "Reading package lists...\n",
+            "ingestionTime": 1765667788806
+        },
+        {
+            "timestamp": 1765667788803,
+            "message": "\n",
+            "ingestionTime": 1765667788806
+        },
+        {
+            "timestamp": 1765667788803,
+            "message": "[Container] 2025/12/13 23:16:27.325495 Running command sudo apt-get install -y build-essential zlib1g-dev musl-tools\n",
+            "ingestionTime": 1765667788806
+        },
+        {
+            "timestamp": 1765667788803,
+            "message": "Reading package lists...\n",
+            "ingestionTime": 1765667788806
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "Building dependency tree...\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "Reading state information...\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "build-essential is already the newest version (12.9ubuntu3).\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "zlib1g-dev is already the newest version (1:1.2.11.dfsg-2ubuntu9.2).\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "Recommended packages:\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "  linux-musl-dev\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "The following NEW packages will be installed:\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "  musl musl-dev musl-tools\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "0 upgraded, 3 newly installed, 0 to remove and 32 not upgraded.\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "Need to get 1,018 kB of archives.\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "After this operation, 4,100 kB of additional disk space will be used.\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "Get:1 http://archive.ubuntu.com/ubuntu jammy/universe amd64 musl amd64 1.2.2-4 [407 kB]\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "Get:2 http://archive.ubuntu.com/ubuntu jammy/universe amd64 musl-dev amd64 1.2.2-4 [605 kB]\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667790818,
+            "message": "Get:3 http://archive.ubuntu.com/ubuntu jammy/universe amd64 musl-tools amd64 1.2.2-4 [5,520 B]\n",
+            "ingestionTime": 1765667790821
+        },
+        {
+            "timestamp": 1765667792835,
+            "message": "debconf: unable to initialize frontend: Dialog\n",
+            "ingestionTime": 1765667792838
+        },
+        {
+            "timestamp": 1765667792835,
+            "message": "debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)\n",
+            "ingestionTime": 1765667792838
+        },
+        {
+            "timestamp": 1765667792835,
+            "message": "debconf: falling back to frontend: Readline\n",
+            "ingestionTime": 1765667792838
+        },
+        {
+            "timestamp": 1765667792835,
+            "message": "debconf: unable to initialize frontend: Readline\n",
+            "ingestionTime": 1765667792838
+        },
+        {
+            "timestamp": 1765667792835,
+            "message": "debconf: (This frontend requires a controlling tty.)\n",
+            "ingestionTime": 1765667792838
+        },
+        {
+            "timestamp": 1765667792835,
+            "message": "debconf: falling back to frontend: Teletype\n",
+            "ingestionTime": 1765667792838
+        },
+        {
+            "timestamp": 1765667792835,
+            "message": "dpkg-preconfigure: unable to re-open stdin: \n",
+            "ingestionTime": 1765667792838
+        },
+        {
+            "timestamp": 1765667792835,
+            "message": "Fetched 1,018 kB in 0s (7,980 kB/s)\n",
+            "ingestionTime": 1765667792838
+        },
+        {
+            "timestamp": 1765667794849,
+            "message": "Selecting previously unselected package musl:amd64.\r\n",
+            "ingestionTime": 1765667794851
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "(Reading database ... \r(Reading database ... 5%\r(Reading database ... 10%\r(Reading database ... 15%\r(Reading database ... 20%\r(Reading database ... 25%\r(Reading database ... 30%\r(Reading database ... 35%\r(Reading database ... 40%\r(Reading database ... 45%\r(Reading database ... 50%\r(Reading database ... 55%\r(Reading database ... 60%\r(Reading database ... 65%\r(Reading database ... 70%\r(Reading database ... 75%\r(Reading database ... 80%\r(Reading database ... 85%\r(Reading database ... 90%\r(Reading database ... 95%\r(Reading database ... 100%\r(Reading database ... 58440 files and directories currently installed.)\r\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "Preparing to unpack .../musl_1.2.2-4_amd64.deb ...\r\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "Unpacking musl:amd64 (1.2.2-4) ...\r\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "Selecting previously unselected package musl-dev:amd64.\r\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "Preparing to unpack .../musl-dev_1.2.2-4_amd64.deb ...\r\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "Unpacking musl-dev:amd64 (1.2.2-4) ...\r\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "Selecting previously unselected package musl-tools.\r\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "Preparing to unpack .../musl-tools_1.2.2-4_amd64.deb ...\r\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "Unpacking musl-tools (1.2.2-4) ...\r\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "Setting up musl:amd64 (1.2.2-4) ...\r\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "Setting up musl-dev:amd64 (1.2.2-4) ...\r\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "Setting up musl-tools (1.2.2-4) ...\r\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "[Container] 2025/12/13 23:16:35.791726 Running command curl -L https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz -o /tmp/zlib.tar.gz\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "                                 Dload  Upload   Total   Spent    Left  Speed\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "\r100 1477k  100 1477k    0     0  7515k      0 --:--:-- --:--:-- --:--:-- 7515k\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "[Container] 2025/12/13 23:16:36.046342 Running command tar -xzf /tmp/zlib.tar.gz -C /tmp\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667796867,
+            "message": "[Container] 2025/12/13 23:16:36.083600 Running command cd /tmp/zlib-1.3.1 && CC=musl-gcc ./configure --prefix=/usr/local/musl --static && make && sudo make install\n",
+            "ingestionTime": 1765667796870
+        },
+        {
+            "timestamp": 1765667798885,
+            "message": "Building static library libz.a version 1.3.1 with musl-gcc.\n",
+            "ingestionTime": 1765667798889
+        },
+        {
+            "timestamp": 1765667798885,
+            "message": "Checking for size_t... Yes.\n",
+            "ingestionTime": 1765667798889
+        },
+        {
+            "timestamp": 1765667798885,
+            "message": "Checking for off64_t... Yes.\n",
+            "ingestionTime": 1765667798889
+        },
+        {
+            "timestamp": 1765667798885,
+            "message": "Checking for fseeko... Yes.\n",
+            "ingestionTime": 1765667798889
+        },
+        {
+            "timestamp": 1765667798885,
+            "message": "Checking for strerror... Yes.\n",
+            "ingestionTime": 1765667798889
+        },
+        {
+            "timestamp": 1765667798885,
+            "message": "Checking for unistd.h... Yes.\n",
+            "ingestionTime": 1765667798905
+        },
+        {
+            "timestamp": 1765667798885,
+            "message": "Checking for stdarg.h... Yes.\n",
+            "ingestionTime": 1765667798925
+        },
+        {
+            "timestamp": 1765667798885,
+            "message": "Checking whether to use vs[n]printf() or s[n]printf()... using vs[n]printf().\n",
+            "ingestionTime": 1765667798938
+        },
+        {
+            "timestamp": 1765667800952,
+            "message": "Checking for vsnprintf() in stdio.h... Yes.\n",
+            "ingestionTime": 1765667800955
+        },
+        {
+            "timestamp": 1765667800952,
+            "message": "Checking for return value of vsnprintf()... Yes.\n",
+            "ingestionTime": 1765667800955
+        },
+        {
+            "timestamp": 1765667800952,
+            "message": "Checking for attribute(visibility) support... Yes.\n",
+            "ingestionTime": 1765667800955
+        },
+        {
+            "timestamp": 1765667800952,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -I. -c -o example.o test/example.c\n",
+            "ingestionTime": 1765667800955
+        },
+        {
+            "timestamp": 1765667800952,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o adler32.o adler32.c\n",
+            "ingestionTime": 1765667800955
+        },
+        {
+            "timestamp": 1765667800952,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o crc32.o crc32.c\n",
+            "ingestionTime": 1765667800955
+        },
+        {
+            "timestamp": 1765667800952,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o deflate.o deflate.c\n",
+            "ingestionTime": 1765667800955
+        },
+        {
+            "timestamp": 1765667800952,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o infback.o infback.c\n",
+            "ingestionTime": 1765667800955
+        },
+        {
+            "timestamp": 1765667800952,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o inffast.o inffast.c\n",
+            "ingestionTime": 1765667800955
+        },
+        {
+            "timestamp": 1765667800952,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o inflate.o inflate.c\n",
+            "ingestionTime": 1765667800955
+        },
+        {
+            "timestamp": 1765667800952,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o inftrees.o inftrees.c\n",
+            "ingestionTime": 1765667800955
+        },
+        {
+            "timestamp": 1765667800952,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o trees.o trees.c\n",
+            "ingestionTime": 1765667800955
+        },
+        {
+            "timestamp": 1765667802971,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o zutil.o zutil.c\n",
+            "ingestionTime": 1765667802975
+        },
+        {
+            "timestamp": 1765667802971,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o compress.o compress.c\n",
+            "ingestionTime": 1765667802975
+        },
+        {
+            "timestamp": 1765667802971,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o uncompr.o uncompr.c\n",
+            "ingestionTime": 1765667802975
+        },
+        {
+            "timestamp": 1765667802971,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o gzclose.o gzclose.c\n",
+            "ingestionTime": 1765667802975
+        },
+        {
+            "timestamp": 1765667802971,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o gzlib.o gzlib.c\n",
+            "ingestionTime": 1765667802975
+        },
+        {
+            "timestamp": 1765667802971,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o gzread.o gzread.c\n",
+            "ingestionTime": 1765667802975
+        },
+        {
+            "timestamp": 1765667802971,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -c -o gzwrite.o gzwrite.c\n",
+            "ingestionTime": 1765667802975
+        },
+        {
+            "timestamp": 1765667802971,
+            "message": "ar rc libz.a adler32.o crc32.o deflate.o infback.o inffast.o inflate.o inftrees.o trees.o zutil.o compress.o uncompr.o gzclose.o gzlib.o gzread.o gzwrite.o \n",
+            "ingestionTime": 1765667802975
+        },
+        {
+            "timestamp": 1765667806994,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -o example example.o -L. libz.a\n",
+            "ingestionTime": 1765667806997
+        },
+        {
+            "timestamp": 1765667806994,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -I. -c -o minigzip.o test/minigzip.c\n",
+            "ingestionTime": 1765667806997
+        },
+        {
+            "timestamp": 1765667806994,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -o minigzip minigzip.o -L. libz.a\n",
+            "ingestionTime": 1765667806997
+        },
+        {
+            "timestamp": 1765667806994,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -I. -D_FILE_OFFSET_BITS=64 -c -o example64.o test/example.c\n",
+            "ingestionTime": 1765667807014
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -o example64 example64.o -L. libz.a\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN -I. -D_FILE_OFFSET_BITS=64 -c -o minigzip64.o test/minigzip.c\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "musl-gcc -O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN  -o minigzip64 minigzip64.o -L. libz.a\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "rm -f /usr/local/musl/lib/libz.a\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "cp libz.a /usr/local/musl/lib\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "chmod 644 /usr/local/musl/lib/libz.a\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "rm -f /usr/local/musl/share/man/man3/zlib.3\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "cp zlib.3 /usr/local/musl/share/man/man3\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "chmod 644 /usr/local/musl/share/man/man3/zlib.3\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "rm -f /usr/local/musl/lib/pkgconfig/zlib.pc\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "cp zlib.pc /usr/local/musl/lib/pkgconfig\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "chmod 644 /usr/local/musl/lib/pkgconfig/zlib.pc\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "rm -f /usr/local/musl/include/zlib.h /usr/local/musl/include/zconf.h\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "cp zlib.h zconf.h /usr/local/musl/include\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "chmod 644 /usr/local/musl/include/zlib.h /usr/local/musl/include/zconf.h\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "[Container] 2025/12/13 23:16:47.202562 Running command curl -L https://download.oracle.com/graalvm/21/latest/graalvm-jdk-21_linux-x64_bin.tar.gz -o /tmp/graalvm.tar.gz\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "                                 Dload  Upload   Total   Spent    Left  Speed\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r 70  320M   70  225M    0     0   217M      0  0:00:01  0:00:01 --:--:--  217M\r100  320M  100  320M    0     0   223M      0  0:00:01  0:00:01 --:--:--  223M\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "[Container] 2025/12/13 23:16:48.651598 Running command sudo mkdir -p /opt/graalvm\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667809029,
+            "message": "[Container] 2025/12/13 23:16:48.665206 Running command sudo tar -xzf /tmp/graalvm.tar.gz -C /opt/graalvm --strip-components=1\n",
+            "ingestionTime": 1765667809032
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "[Container] 2025/12/13 23:16:52.765472 Running command export GRAALVM_HOME=/opt/graalvm\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "[Container] 2025/12/13 23:16:52.774747 Running command export JAVA_HOME=/opt/graalvm\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "[Container] 2025/12/13 23:16:52.783608 Running command export PATH=/opt/graalvm/bin:$PATH\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "[Container] 2025/12/13 23:16:52.792091 Running command ls -l ${JAVA_HOME}/bin\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "total 484\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12384 Oct  9 13:19 jar\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12392 Oct  9 13:19 jarsigner\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12328 Oct  9 13:19 java\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12416 Oct  9 13:19 javac\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12424 Oct  9 13:19 javadoc\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12384 Oct  9 13:19 javap\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12384 Oct  9 13:19 jcmd\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12456 Oct  9 13:19 jconsole\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12384 Oct  9 13:19 jdb\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12392 Oct  9 13:19 jdeprscan\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12384 Oct  9 13:19 jdeps\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12384 Oct  9 13:19 jfr\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12384 Oct  9 13:19 jhsdb\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12392 Oct  9 13:19 jimage\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12416 Oct  9 13:19 jinfo\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12416 Oct  9 13:19 jlink\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12416 Oct  9 13:19 jmap\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12384 Oct  9 13:19 jmod\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12392 Oct  9 13:19 jpackage\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12384 Oct  9 13:19 jps\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12424 Oct  9 13:19 jrunscript\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12392 Oct  9 13:19 jshell\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12424 Oct  9 13:19 jstack\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12384 Oct  9 13:19 jstat\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12392 Oct  9 13:19 jstatd\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12392 Oct  9 13:19 jwebserver\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12392 Oct  9 13:19 keytool\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "lrwxrwxrwx 1 root root    27 Oct  9 13:20 native-image -> ../lib/svm/bin/native-image\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "lrwxrwxrwx 1 root root    37 Oct  9 13:20 native-image-configure -> ../lib/svm/bin/native-image-configure\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 17120 Oct  9 12:56 native-image-inspect\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12416 Oct  9 13:19 rmiregistry\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 12392 Oct  9 13:19 serialver\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "[Container] 2025/12/13 23:16:52.838073 Running command ls -l ${JAVA_HOME}/lib/svm/bin/native-image\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "-rwxrwxr-x 1 root root 25369536 Oct  9 13:20 /opt/graalvm/lib/svm/bin/native-image\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667813047,
+            "message": "[Container] 2025/12/13 23:16:52.847299 Running command curl -sSL https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.9/apache-maven-3.9.9-bin.tar.gz | tar -xz -C /tmp\n",
+            "ingestionTime": 1765667813051
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[Container] 2025/12/13 23:16:53.147640 Running command export M2_HOME=/tmp/apache-maven-3.9.9\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[Container] 2025/12/13 23:16:53.156094 Running command export PATH=$M2_HOME/bin:$PATH\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[Container] 2025/12/13 23:16:53.164346 Running command mvn -v\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Apache Maven 3.9.9 (8e8579a9e76f7d015ee5ec7bfcdc97d260186937)\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Maven home: /tmp/apache-maven-3.9.9\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Java version: 21.0.9, vendor: Oracle Corporation, runtime: /opt/graalvm\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Default locale: en_US, platform encoding: UTF-8\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "OS name: \"linux\", version: \"4.14.355-280.708.amzn2.x86_64\", arch: \"amd64\", family: \"unix\"\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[Container] 2025/12/13 23:16:53.508984 Phase complete: INSTALL State: SUCCEEDED\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[Container] 2025/12/13 23:16:53.508999 Phase context status code:  Message: \n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[Container] 2025/12/13 23:16:53.549107 Entering phase PRE_BUILD\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[Container] 2025/12/13 23:16:53.549882 Running command echo \"[pre_build] Limpando workspace\"\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[pre_build] Limpando workspace\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[Container] 2025/12/13 23:16:53.558463 Running command ls -R\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": ".:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "CMakeLists.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "ChangeLog\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "FAQ\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "INDEX\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "LICENSE\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.in\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "README\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "adler32.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "adler32.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "amiga\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "compress.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "compress.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "configure\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "configure.log\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "contrib\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "crc32.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "crc32.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "crc32.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "deflate.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "deflate.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "deflate.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "doc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "example\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "example.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "example64\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "example64.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "examples\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gzclose.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gzclose.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gzguts.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gzlib.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gzlib.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gzread.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gzread.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gzwrite.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gzwrite.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "infback.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "infback.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inffast.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inffast.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inffast.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inffixed.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inflate.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inflate.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inflate.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inftrees.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inftrees.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inftrees.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "libz.a\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "make_vms.com\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minigzip\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minigzip.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minigzip64\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minigzip64.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "msdos\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "nintendods\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "old\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "os400\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "qnx\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "test\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "treebuild.xml\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "trees.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "trees.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "trees.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "uncompr.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "uncompr.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "watcom\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "win32\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zconf.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zconf.h.cmakein\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zconf.h.in\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.3\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.3.pdf\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.map\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.pc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.pc.cmakein\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.pc.in\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zutil.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zutil.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zutil.o\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./amiga:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.pup\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.sas\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "README.contrib\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "ada\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "blast\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "delphi\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "dotzlib\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gcc_gvmat64\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "infback9\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "iostream\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "iostream2\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "iostream3\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minizip\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "nuget\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "pascal\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "puff\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlib\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "untgz\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "vstudio\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/ada:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "buffer_demo.adb\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "mtest.adb\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "read.adb\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "readme.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "test.adb\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib-streams.adb\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib-streams.ads\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib-thin.adb\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib-thin.ads\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.adb\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.ads\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.gpr\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/blast:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "README\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "blast.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "blast.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "test.pk\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "test.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/delphi:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "ZLib.pas\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "ZLibConst.pas\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "readme.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibd32.mak\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/dotzlib:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "DotZLib\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "DotZLib.build\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "DotZLib.chm\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "DotZLib.sln\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "LICENSE_1_0.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "readme.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/dotzlib/DotZLib:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "AssemblyInfo.cs\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "ChecksumImpl.cs\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "CircularBuffer.cs\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "CodecBase.cs\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Deflater.cs\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "DotZLib.cs\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "DotZLib.csproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "GZipStream.cs\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Inflater.cs\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "UnitTests.cs\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/gcc_gvmat64:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gvmat64.S\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/infback9:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "README\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "infback9.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "infback9.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inffix9.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inflate9.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inftree9.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "inftree9.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/iostream:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "test.cpp\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zfstream.cpp\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zfstream.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/iostream2:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zstream.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zstream_test.cpp\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/iostream3:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "README\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "TODO\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "test.cc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zfstream.cc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zfstream.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/minizip:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.am\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "MiniZip64_Changes.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "MiniZip64_info.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "configure.ac\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "crypt.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "ioapi.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "ioapi.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "iowin32.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "iowin32.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "make_vms.com\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "miniunz.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "miniunzip.1\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minizip.1\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minizip.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minizip.pc.in\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "mztools.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "mztools.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "unzip.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "unzip.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zip.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zip.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/nuget:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "nuget.csproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "nuget.sln\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/pascal:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "example.pas\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "readme.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibd32.mak\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibpas.pas\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/puff:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "README\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "puff.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "puff.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "pufftest.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zeros.raw\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/testzlib:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlib.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlib.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/untgz:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.msc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "untgz.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/vstudio:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "readme.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "vc10\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "vc11\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "vc12\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "vc14\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "vc17\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "vc9\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/vstudio/vc10:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "miniunz.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "miniunz.vcxproj.filters\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minizip.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minizip.vcxproj.filters\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlib.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlib.vcxproj.filters\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlibdll.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlibdll.vcxproj.filters\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.rc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibstat.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibstat.vcxproj.filters\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.def\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.sln\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.vcxproj.filters\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/vstudio/vc11:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "miniunz.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minizip.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlib.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlibdll.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.rc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibstat.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.def\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.sln\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/vstudio/vc12:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "miniunz.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minizip.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlib.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlibdll.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.rc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibstat.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.def\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.sln\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/vstudio/vc14:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "miniunz.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minizip.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlib.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlibdll.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.rc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibstat.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.def\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.sln\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/vstudio/vc17:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "miniunz.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minizip.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlib.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlibdll.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.rc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibstat.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.def\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.sln\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.vcxproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./contrib/vstudio/vc9:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "miniunz.vcproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minizip.vcproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlib.vcproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "testzlibdll.vcproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.rc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibstat.vcproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.def\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.sln\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlibvc.vcproj\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./doc:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "algorithm.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "crc-doc.1.0.pdf\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "rfc1950.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "rfc1951.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "rfc1952.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "txtvsbin.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./examples:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "README.examples\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "enough.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "fitblk.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gun.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gzappend.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gzjoin.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gzlog.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gzlog.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "gznorm.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib_how.html\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zpipe.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zran.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zran.h\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./msdos:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.bor\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.dj2\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.emx\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.msc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.tc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./nintendods:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "README\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./old:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.emx\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.riscos\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "README\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "descrip.mms\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "os2\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "visual-basic.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./old/os2:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.os2\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.def\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./os400:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "README400\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "bndsrc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "make.sh\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.inc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./qnx:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "package.qpg\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./test:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "example.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "infcover.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "minigzip.c\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./watcom:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "watcom_f.mak\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "watcom_l.mak\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "./win32:\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "DLL_FAQ.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.bor\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.gcc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Makefile.msc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "README-WIN32.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "VisualC.txt\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib.def\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "zlib1.rc\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[Container] 2025/12/13 23:16:53.568421 Running command mvn -version\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Apache Maven 3.9.9 (8e8579a9e76f7d015ee5ec7bfcdc97d260186937)\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Maven home: /tmp/apache-maven-3.9.9\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Java version: 21.0.9, vendor: Oracle Corporation, runtime: /opt/graalvm\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "Default locale: en_US, platform encoding: UTF-8\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "OS name: \"linux\", version: \"4.14.355-280.708.amzn2.x86_64\", arch: \"amd64\", family: \"unix\"\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[Container] 2025/12/13 23:16:53.747933 Running command mvn -f springboot4-otel-poc/pom.xml clean\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "POM file springboot4-otel-poc/pom.xml specified with the -f/--file command line argument does not exist\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "POM file springboot4-otel-poc/pom.xml specified with the -f/--file command line argument does not exist\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[Container] 2025/12/13 23:16:53.881311 Command did not exit successfully mvn -f springboot4-otel-poc/pom.xml clean exit status 1\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[Container] 2025/12/13 23:16:53.891398 Phase complete: PRE_BUILD State: FAILED\n",
+            "ingestionTime": 1765667814072
+        },
+        {
+            "timestamp": 1765667814066,
+            "message": "[Container] 2025/12/13 23:16:53.891415 Phase context status code: COMMAND_EXECUTION_ERROR Message: Error while executing command: mvn -f springboot4-otel-poc/pom.xml clean. Reason: exit status 1\n",
+            "ingestionTime": 1765667814072
+        }
+    ],
+    "nextForwardToken": "f/39375708026732410559610766822022593575661459147670684069/s",
+    "nextBackwardToken": "b/39375707238557173007942953088017830544906434075167948800/s"
+}

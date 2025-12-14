@@ -1,0 +1,15 @@
+{
+    "groupName": "/aws/codebuild/ecs-demo-dev-codebuild-sb4-otel",
+    "streamName": "build/f0a3f835-f9ff-4137-937a-15f1f947fb2e",
+    "deepLink": "https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/log-group/$252Faws$252Fcodebuild$252Fecs-demo-dev-codebuild-sb4-otel/log-events/build$252Ff0a3f835-f9ff-4137-937a-15f1f947fb2e",
+    "cloudWatchLogsArn": "arn:aws:logs:us-east-1:389985004788:log-group:/aws/codebuild/ecs-demo-dev-codebuild-sb4-otel:log-stream:build/f0a3f835-f9ff-4137-937a-15f1f947fb2e",
+    "cloudWatchLogs": {
+        "status": "ENABLED",
+        "groupName": "/aws/codebuild/ecs-demo-dev-codebuild-sb4-otel",
+        "streamName": "build"
+    },
+    "s3Logs": {
+        "status": "DISABLED",
+        "encryptionDisabled": false
+    }
+}
