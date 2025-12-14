@@ -96,11 +96,10 @@
                                         <buildArg>--enable-monitoring</buildArg>
                                         <buildArg>-O3</buildArg>
                                         <buildArg>-march=native</buildArg>
-                                        <buildArg>--static</buildArg>
+                                    
                                         <buildArg>--gc=G1</buildArg>
                                         <buildArg>-R:MaxRAMPercentage=80.0</buildArg>
-                                        <buildArg>--libc=musl</buildArg>
-                                        <buildArg>-H:CLibraryPath=/usr/local/musl/lib</buildArg>
+                                      
                                     </buildArgs>
                                 </configuration>
                             </execution>
