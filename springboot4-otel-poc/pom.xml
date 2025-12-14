@@ -95,6 +95,7 @@
                                     <buildArgs>
                                         <buildArg>--enable-monitoring</buildArg>
                                         <buildArg>-O3</buildArg>
+                                        <buildArg>-march=native</buildArg>
                                         <buildArg>--static</buildArg>
                                         <buildArg>--gc=G1</buildArg>
                                         <buildArg>-R:MaxRAMPercentage=80.0</buildArg>
