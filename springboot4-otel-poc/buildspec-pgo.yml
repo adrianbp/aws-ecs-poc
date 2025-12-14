@@ -54,7 +54,7 @@ phases:
       
       # ETAPA 2: Execução e Coleta de Perfil
       - echo "[pgo-step-2] Executando aplicação para profiling..."
-      - ./springboot4-otel-poc/target/app-instrumented & APP_PID=$!
+      - "./springboot4-otel-poc/target/app-instrumented & APP_PID=$!"
       - echo "App PID: $APP_PID"
       
       - echo "Aguardando inicialização..."
