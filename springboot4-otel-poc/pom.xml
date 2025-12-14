@@ -98,9 +98,6 @@
                                         <buildArg>-march=native</buildArg>
                                         <buildArg>--gc=G1</buildArg>
                                         <buildArg>-R:MaxRAMPercentage=80</buildArg>
-                                        <buildArg>--static</buildArg>
-                                        <buildArg>--libc=musl</buildArg>
-                                        <buildArg>-H:CLibraryPath=/usr/local/musl/lib</buildArg>
                                     </buildArgs>
                                 </configuration>
                             </execution>

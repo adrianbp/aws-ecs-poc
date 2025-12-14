@@ -1,0 +1,16 @@
+FROM container-registry.oracle.com/graalvm/native-image:21
+
+USER root
+
+# Instalar Maven e dependências
+RUN microdnf install -y maven zlib-devel
+
+WORKDIR /app
+
+# Copiar apenas o necessário para o build
+COPY pom.xml .
+COPY src src
+
+# Executar o build nativo
+# O perfil 'native' já está configurado no pom.xml
+RUN mvn -Pnative -DskipTests package
