@@ -41,12 +41,20 @@ phases:
 
   pre_build:
     commands:
+      - echo "[pre_build] Configurando ambiente Java..."
+      - export JAVA_HOME=/opt/graalvm
+      - export PATH=$JAVA_HOME/bin:$M2_HOME/bin:$PATH
+      - java -version
+      - javac -version
       - echo "[pre_build] Limpando workspace"
       - cd $CODEBUILD_SRC_DIR
       - mvn -f springboot4-otel-poc/pom.xml clean
 
   build:
     commands:
+      - echo "[build] Configurando ambiente Java..."
+      - export JAVA_HOME=/opt/graalvm
+      - export PATH=$JAVA_HOME/bin:$M2_HOME/bin:$PATH
       # ETAPA 1: Build Instrumentado
       - echo "[pgo-step-1] Compilando imagem instrumentada..."
       - mvn -f springboot4-otel-poc/pom.xml -Pnative-pgo -DskipTests package
