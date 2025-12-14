@@ -43,9 +43,12 @@ phases:
     commands:
       - echo "[pre_build] Configurando ambiente Java..."
       - export JAVA_HOME=/opt/graalvm
+      - export M2_HOME=/tmp/apache-maven-3.9.9
       - export PATH=$JAVA_HOME/bin:$M2_HOME/bin:$PATH
+      - echo "Verificando versões:"
       - java -version
       - javac -version
+      - mvn -version
       - echo "[pre_build] Limpando workspace"
       - cd $CODEBUILD_SRC_DIR
       - mvn -f springboot4-otel-poc/pom.xml clean
@@ -54,6 +57,7 @@ phases:
     commands:
       - echo "[build] Configurando ambiente Java..."
       - export JAVA_HOME=/opt/graalvm
+      - export M2_HOME=/tmp/apache-maven-3.9.9
       - export PATH=$JAVA_HOME/bin:$M2_HOME/bin:$PATH
       # ETAPA 1: Build Instrumentado
       - echo "[pgo-step-1] Compilando imagem instrumentada..."
