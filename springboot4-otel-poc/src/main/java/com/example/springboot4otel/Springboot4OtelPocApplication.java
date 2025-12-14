@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 public class Springboot4OtelPocApplication {
 
     public static void main(String[] args) {
+        System.setProperty("java.version", "25");
         SpringApplication.run(Springboot4OtelPocApplication.class, args);
     }
 
