@@ -2,8 +2,18 @@ FROM container-registry.oracle.com/graalvm/native-image:21
 
 USER root
 
-# Instalar Maven e dependências
-RUN microdnf install -y maven zlib-devel
+# Instalar dependências básicas e zlib-devel
+# Evitamos instalar 'maven' via dnf para não puxar dependências conflitantes (como outro JDK)
+RUN microdnf install -y zlib-devel findutils tar gzip
+
+# Instalar Maven manualmente
+ENV MAVEN_VERSION=3.9.9
+ENV MAVEN_HOME=/usr/share/maven
+ENV PATH=${MAVEN_HOME}/bin:${PATH}
+
+RUN curl -fsSL https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${MAVEN_VERSION}/apache-maven-${MAVEN_VERSION}-bin.tar.gz | tar -xzC /usr/share \
+    && mv /usr/share/apache-maven-${MAVEN_VERSION} ${MAVEN_HOME} \
+    && ln -s ${MAVEN_HOME}/bin/mvn /usr/bin/mvn
 
 WORKDIR /app
 
