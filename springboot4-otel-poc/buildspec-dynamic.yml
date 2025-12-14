@@ -1,0 +1,52 @@
+version: 0.2
+
+env:
+  shell: bash
+  variables:
+    JAVA_HOME: /opt/graalvm
+    GRAALVM_HOME: /opt/graalvm
+    MAVEN_OPTS: -Dmaven.test.skip=true
+  exported-variables:
+    - JAVA_HOME
+    - GRAALVM_HOME
+    - M2_HOME
+    - PATH
+phases:
+  install:
+    commands:
+      - echo "[install] Configurando toolchain (Dynamic/Glibc)"
+      - sudo apt-get update -y
+      - sudo apt-get install -y build-essential zlib1g-dev
+      - curl -L https://download.oracle.com/graalvm/21/latest/graalvm-jdk-21_linux-x64_bin.tar.gz -o /tmp/graalvm.tar.gz
+      - sudo mkdir -p /opt/graalvm
+      - sudo tar -xzf /tmp/graalvm.tar.gz -C /opt/graalvm --strip-components=1
+      - export GRAALVM_HOME=/opt/graalvm
+      - export JAVA_HOME=/opt/graalvm
+      - export PATH=/opt/graalvm/bin:$PATH
+      - ls -l ${JAVA_HOME}/bin
+      - ls -l ${JAVA_HOME}/lib/svm/bin/native-image
+      - curl -sSL https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.9/apache-maven-3.9.9-bin.tar.gz | tar -xz -C /tmp
+      - export M2_HOME=/tmp/apache-maven-3.9.9
+      - export PATH=$M2_HOME/bin:$PATH
+      - mvn -v
+  pre_build:
+    commands:
+      - echo "[pre_build] Limpando workspace"
+      - cd $CODEBUILD_SRC_DIR
+      - mvn -version
+      - mvn -f springboot4-otel-poc/pom.xml clean
+  build:
+    commands:
+      - echo "[build] Compilando nativamente (Dynamic)"
+      - mvn -f springboot4-otel-poc/pom.xml -Pnative-dynamic -DskipTests package
+  post_build:
+    commands:
+      - echo "[post_build] Artefato nativo gerado em springboot4-otel-poc/target"
+artifacts:
+  files:
+    - springboot4-otel-poc/target/*.jar
+    - springboot4-otel-poc/target/*
+  discard-paths: no
+cache:
+  paths:
+    - /root/.m2/**/*
