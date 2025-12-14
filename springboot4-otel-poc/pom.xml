@@ -98,6 +98,8 @@
                                         <buildArg>-march=native</buildArg>
                                         <buildArg>--gc=G1</buildArg>
                                         <buildArg>-R:MaxRAMPercentage=80</buildArg>
+                                        <buildArg>--static</buildArg>
+                                        <buildArg>--libc=glibc</buildArg>
                                     </buildArgs>
                                 </configuration>
                             </execution>
