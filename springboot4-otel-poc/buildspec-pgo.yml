@@ -54,8 +54,8 @@ phases:
       
       # ETAPA 2: Execução e Coleta de Perfil
       - echo "[pgo-step-2] Executando aplicação para profiling..."
-      - "./springboot4-otel-poc/target/app-instrumented & APP_PID=$!"
-      - echo "App PID: $APP_PID"
+      - "nohup ./springboot4-otel-poc/target/app-instrumented > app.log 2>&1 & echo $! > app.pid"
+      - echo "App PID: $(cat app.pid)"
       
       - echo "Aguardando inicialização..."
       - sleep 15
@@ -64,8 +64,8 @@ phases:
       - k6 run k6/pgo-load.js
       
       - echo "Parando aplicação para gravar default.iprof..."
-      - kill -TERM $APP_PID
-      - wait $APP_PID || true
+      - kill -TERM $(cat app.pid)
+      - wait $(cat app.pid) || true
       
       - echo "Verificando arquivo de perfil..."
       - ls -l default.iprof
