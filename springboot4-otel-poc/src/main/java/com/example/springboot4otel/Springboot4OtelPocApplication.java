@@ -11,7 +11,13 @@ import org.springframework.context.annotation.Bean;
 public class Springboot4OtelPocApplication {
 
     public static void main(String[] args) {
+        System.out.println("DEBUG: Pre-fix java.version=" + System.getProperty("java.version"));
+        System.out.println("DEBUG: Pre-fix java.specification.version=" + System.getProperty("java.specification.version"));
+        
+        // Workaround for Spring Boot 4 Native Image check
         System.setProperty("java.version", "25");
+        System.setProperty("java.specification.version", "25");
+        
         SpringApplication.run(Springboot4OtelPocApplication.class, args);
     }
 
