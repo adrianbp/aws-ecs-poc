@@ -19,7 +19,8 @@ phases:
       - sudo apt-get update -y
       - sudo apt-get install -y build-essential zlib1g-dev gnupg2
       
-      # Instalar GraalVM
+      # Instalar GraalVM (Limpar instalação anterior para evitar cache sujo)
+      - sudo rm -rf /opt/graalvm
       - curl -L https://download.oracle.com/graalvm/25/latest/graalvm-jdk-25_linux-x64_bin.tar.gz -o /tmp/graalvm.tar.gz
       - sudo mkdir -p /opt/graalvm
       - sudo tar -xzf /tmp/graalvm.tar.gz -C /opt/graalvm --strip-components=1
